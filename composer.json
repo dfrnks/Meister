@@ -1,0 +1,40 @@
+{
+    "name": "frnks/Meister",
+    "description": "Meister is a new Framework, more one in many",
+    "license": "MIT",
+    "homepage": "https://github.com/frnks/Meister",
+    "config": {
+        "bin-dir": "bin/"
+    },
+    "authors": [
+        {
+            "name": "Frnks",
+            "email": "douglasfrancardoso@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Meister\\": "src/Monolog"
+        }
+    },
+    "require": {
+        "php": ">=7",
+        "swiftmailer/swiftmailer": "^5.4",
+        "doctrine/mongodb-odm": "^1.0",
+        "monolog/monolog": "^1.17",
+        "zeptech/annotations": "1.1.0",
+        "twig/twig": "~1.0",
+        "symfony/validator": "^3.0",
+        "symfony/yaml": "^3.0",
+        "pimple/pimple": "~3.0",
+        "lcobucci/jwt": "^3.1"
+    },
+    "require-dev":{
+        "phpunit/phpunit": "5.0.*"
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0.x-dev"
+        }
+    }
+}
