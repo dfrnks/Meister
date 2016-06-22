@@ -14,11 +14,11 @@
     ],
     "autoload": {
         "psr-4": {
-            "Meister\\": "src/Monolog"
+            "Meister\\": "src/Meister"
         }
     },
     "require": {
-        "php": ">=7",
+        "php": ">=5.6",
         "swiftmailer/swiftmailer": "^5.4",
         "doctrine/mongodb-odm": "^1.0",
         "monolog/monolog": "^1.17",
