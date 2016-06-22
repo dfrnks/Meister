@@ -12,7 +12,8 @@ class AppInit extends init {
 
     public function getRotas(){
         return [
-            "rota/teste" => "teste::homeController::indexAction"
+            "rota/teste" => "teste::homeController::indexAction",
+			"teste::homeController::indexAction" => "/api/{id}"
         ];
     }
 }
