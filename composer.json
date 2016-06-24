@@ -15,7 +15,8 @@
     "autoload": {
         "psr-4": {
             "Meister\\": "src",
-            "app\\":"app"
+            "app\\":"app",
+            "src\\":"src"
         }
     },
     "require": {
