@@ -6,14 +6,19 @@ use Meister\Meister\init;
 
 class AppInit extends init {
 
-    public function getConfig($ambiente){
-        return __DIR__ . '/config/config'.$ambiente.'.yml';
+    public function getConfig($ambiente = null){
+        return __DIR__ . '/config/config_'.$ambiente.'.yml';
+    }
+
+    public function getCache(){
+        return [
+            "twig" => __DIR__.'/cache/twig'
+        ];
     }
 
     public function getRotas(){
         return [
-            "rota/teste" => "teste::homeController::indexAction",
-			"teste::homeController::indexAction" => "/api/{id}"
+            "teste::TesteController::indexAction" => "/home"
         ];
     }
 }

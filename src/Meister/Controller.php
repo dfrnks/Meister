@@ -36,14 +36,14 @@ class Controller {
             $twigConfig
         );
 
-//		/**
-//		 * Verifica permissões para exibir determinada coisa
-//		 */
-//		$function = new \Twig_SimpleFunction('permission', function ($rule) {
-//			return Auth::checkRules($rule);
-//		});
+        /**
+         * Verifica permissões para exibir determinada coisa
+         */
+        $function = new \Twig_SimpleFunction('permission', function ($rule) {
+            return true;//Auth::checkRules($rule);
+        });
 
-//		$twig->addFunction($function);
+        $twig->addFunction($function);
 
         if(array_key_exists('template', $data) && !empty($data['template'])){
             $view = $data['template'];
