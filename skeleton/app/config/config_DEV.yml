@@ -3,6 +3,7 @@ twig:
   debug: true
 
 database:
+  type: mongo
   name: MONGODB
   host: 127.0.0.1
   port:

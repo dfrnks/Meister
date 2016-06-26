@@ -3,6 +3,7 @@ twig:
   debug: true
 
 database:
+  type: mongo
   name: MONGODB
   host: 127.0.0.1
   port:
@@ -22,9 +23,7 @@ field_user: email
 time_session: 3600
 
 modules:
- - app
- - blog
- - notes
+ - teste
 #
 # Se for true, por padrão vai verificar se ele está authenticado para poder acessar o controller,
 # e para poder acessar o controller sem autenticação precisa setar o annotation @notauthenticated

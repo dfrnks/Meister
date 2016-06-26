@@ -12,7 +12,8 @@ class AppInit extends init {
 
     public function getCache(){
         return [
-            "twig" => __DIR__.'/cache/twig'
+            "twig" => __DIR__.'/cache/twig',
+            "doctrine" => __DIR__.'/cache/doctrine'
         ];
     }
 

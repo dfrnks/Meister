@@ -2,15 +2,18 @@
 
 namespace Meister\Meister;
 
+use Meister\Meister\Interfaces\DatabaseInterface;
+use Pimple\Container;
+
 class Controller {
 
-    private $app;
+    public $app;
 
-    private $db;
+    public $db;
 
-    private $config;
+    public $config;
 
-    public function __construct($app, $config, $db){
+    public function __construct(Container $app, array $config, DatabaseInterface $db){
         $this->app    = $app;
         $this->db     = $db;
         $this->config = $config;

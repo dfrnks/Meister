@@ -3,6 +3,7 @@
 namespace Meister\Meister;
 
 use Meister\Meister\Interfaces\InitInterface;
+use Meister\Meister\Libraries\Mongo;
 use Pimple\Container;
 use Symfony\Component\Yaml\Yaml;
 
@@ -22,7 +23,6 @@ abstract class init implements InitInterface{
     
     public function __construct($ambiente = null){
         $this->app          = new Container();
-        $this->db           = [];
         $this->ambiente     = $ambiente;
     }
 
@@ -61,27 +61,36 @@ abstract class init implements InitInterface{
             throw new \Exception('Router not found',420404);
         }
 
-        $rota = explode('::', $rota);
+        list($modulo,$controller,$action) = explode('::', $rota);
 
-        $c = 'src\\'.$rota[0].'\\Controller\\'.$rota[1];
+        $se = (array_search($modulo,$this->config['modules']));
+        
+        if(is_bool($se) && !$se){
+            throw new \Exception('Modulo não registrado');
+        }
+
+        $c = 'src\\'.$modulo.'\\Controller\\'.$controller;
 
         if(!class_exists($c)){
             throw new \Exception("Classe not found ($c)",421404);
         }
 
-        $this->app['Controller']    = $rota[1];
-        $this->app['Action']        = $rota[2];
-        $this->app['Module']        = 'src\\'.$rota[0];
+        $this->app['Controller']    = $controller;
+        $this->app['Action']        = $action;
+        $this->app['Module']        = 'src\\'.$modulo;
 
-        $this->app['ModuleDir']     = str_replace('/web/app.php','',$_SERVER['SCRIPT_FILENAME']).'/src/'.$rota[0];
+        $this->app['ModuleDir']     = str_replace('/web/app.php','',$_SERVER['SCRIPT_FILENAME']).'/src/'.$modulo;
+        $this->app['Modules']       = str_replace('/web/app.php','',$_SERVER['SCRIPT_FILENAME']).'/src/';
+
+        $this->db = $this->newDB();
 
         $this->controller = new $c($this->app,$this->config,$this->db);
 
-        if(!method_exists($this->controller,$rota[2])){
+        if(!method_exists($this->controller,$action)){
             throw new \Exception('Method not found',422404);
         }
 
-        $this->action = $rota[2];
+        $this->action = $action;
 
     }
 
@@ -97,7 +106,7 @@ abstract class init implements InitInterface{
 
     }
 
-    public function twigException(\Exception $e){
+    private function twigException(\Exception $e){
 
         $data['message']= $e->getMessage();
         $data['string'] = $e->getTraceAsString();
@@ -131,5 +140,23 @@ abstract class init implements InitInterface{
 
         echo $twig->render('error.html.twig',$data);
         exit();
+    }
+
+    private function newDB(){
+        $type = $this->config['database']['type'];
+        
+        switch ($type){
+            case 'mongo':
+                $db = new Mongo($this->config,$this->app);
+                break;
+            default;
+                $db = null;
+        }
+        
+        if(!$db){
+            throw new \Exception('Type database not found');
+        }
+        
+        return $db;
     }
 }
