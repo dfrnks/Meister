@@ -46,8 +46,11 @@
         }
     },
     "scripts": {
-        "post-create-project-cmd": [
-            "php -r \"copy('/vendor/frnks/meister/skeleton/*', './');\""
+        "post-package-install": [
+            "php -r \"copy('/skeleton/*', './');\""
+        ],
+        "post-package-update": [
+            "php -r \"copy('/skeleton/*', './');\""
         ]
     }
 }
