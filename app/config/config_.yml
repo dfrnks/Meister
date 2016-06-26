@@ -1,6 +1,6 @@
 twig:
-  cache: true
-  debug: false
+  cache: false
+  debug: true
 
 database:
   name: MONGODB
@@ -20,8 +20,6 @@ mail:
 field_user: email
 
 time_session: 3600
-
-compress: true
 
 modules:
  - app

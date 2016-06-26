@@ -16,7 +16,9 @@ class __TwigTemplate_479537e979511a6d5c412b9075efa8da5cf6e29f0993f1802df6361036c
     protected function doDisplay(array $context, array $blocks = array())
     {
         // line 1
-        echo "Hello World!";
+        echo "Hello ";
+        echo twig_escape_filter($this->env, (isset($context["nome"]) ? $context["nome"] : null), "html", null, true);
+        echo "!";
     }
 
     public function getTemplateName()
@@ -24,9 +26,14 @@ class __TwigTemplate_479537e979511a6d5c412b9075efa8da5cf6e29f0993f1802df6361036c
         return "Teste/index.html.twig";
     }
 
+    public function isTraitable()
+    {
+        return false;
+    }
+
     public function getDebugInfo()
     {
         return array (  19 => 1,);
     }
 }
-/* Hello World!*/
+/* Hello {{ nome }}!*/

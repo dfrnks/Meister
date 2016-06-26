@@ -6,8 +6,8 @@ use Meister\Meister\Controller;
 
 class TesteController extends Controller {
 
-	public function indexAction() {
+    public function indexAction() {
 
-		$this->Render([]);
-	}
+        $this->Render(["nome" => "Douglas"]);
+    }
 }

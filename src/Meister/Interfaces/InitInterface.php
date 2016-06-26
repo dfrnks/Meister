@@ -6,7 +6,7 @@ interface InitInterface
 {
     public function getRotas();
 
-	public function getConfig();
+    public function getConfig($ambiente);
 
-	public function getCache();
+    public function getCache();
 }
