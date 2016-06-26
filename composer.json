@@ -47,10 +47,10 @@
     },
     "scripts": {
         "post-package-install": [
-            "php -r \"copy('skeleton/*', '/');\""
+            "php -r \"copy('skeleton/app', 'app');\""
         ],
         "post-package-update": [
-            "php -r \"copy('skeleton/*', '/');\""
+            "php -r \"copy('skeleton/app', 'app');\""
         ]
     }
 }
