@@ -46,12 +46,9 @@
         }
     },
     "scripts": {
-        "post-package-install": [
-            "php -r \"copy('skeleton/app', 'app');\"",
-            "Meister\\Meister\\UpdateApp::afterInstall"
+        "test": [
+            "@clearCache"
         ],
-        "post-package-update": [
-            "php -r \"copy('skeleton/app', 'app');\""
-        ]
+        "clearCache": "cp -r vendor/frnks/meister/skeleton/app app"
     }
 }
