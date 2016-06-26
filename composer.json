@@ -47,7 +47,8 @@
     },
     "scripts": {
         "post-package-install": [
-            "php -r \"copy('skeleton/app', 'app');\""
+            "php -r \"copy('skeleton/app', 'app');\"",
+            "Meister\\Meister\\UpdateApp::afterInstall"
         ],
         "post-package-update": [
             "php -r \"copy('skeleton/app', 'app');\""
