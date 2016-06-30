@@ -3,6 +3,8 @@
 namespace Meister\Meister;
 
 use Meister\Meister\Interfaces\DatabaseInterface;
+use Meister\Meister\Libraries\Data;
+use Meister\Meister\Libraries\Retorno;
 use Pimple\Container;
 
 class Controller {
@@ -21,44 +23,13 @@ class Controller {
 
     protected function Render($data){
 
-        $view_dir = [
-            __DIR__.'/Views',
-            $this->app['ModuleDir'].'/Views'
-        ];
+        $retorno = new Retorno($this->app,$this->config);
 
-        $twigConfig = [];
-
-        if($this->config['twig']['cache']){
-            $twigConfig["cache"] = $this->app['cache']['twig'];
+        if($this->app['api']){
+            $retorno->jsonRPC($data);
         }
 
-        $twigConfig["debug"] = $this->config['twig']['debug'];
-
-        $twig = new \Twig_Environment(
-            new \Twig_Loader_Filesystem($view_dir),
-            $twigConfig
-        );
-
-        /**
-         * Verifica permissões para exibir determinada coisa
-         */
-        $function = new \Twig_SimpleFunction('permission', function ($rule) {
-            return true;//Auth::checkRules($rule);
-        });
-
-        $twig->addFunction($function);
-
-        if(array_key_exists('template', $data) && !empty($data['template'])){
-            $view = $data['template'];
-        }else{
-            $controller = str_replace('Controller','',$this->app["Controller"]);
-            $method = str_replace('Action','',$this->app["Action"]);
-
-            $view = $controller.'/'.$method.'.html.twig';
-        }
-
-        echo $twig->render($view,$data);
-
+        $retorno->twig($data);
     }
 
     protected function getConfig($conf=null){
@@ -73,4 +44,7 @@ class Controller {
         return $this->config;
     }
 
+    protected function data($data){
+        return Data::serialize($data);
+    }
 }

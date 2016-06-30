@@ -19,7 +19,22 @@ class AppInit extends init {
 
     public function getRotas(){
         return [
-            "teste::TesteController::indexAction" => "/home"
+            [
+                "rota" => "/home",
+                "destino" => "teste::TesteController::indexAction",
+                "options" =>[
+                    "api" => true,
+                    "autentication" => true
+                ]
+            ],
+            [
+                "rota" => "/",
+                "destino" => "teste::TesteController::indexAction",
+                "options" =>[
+                    "api" => true,
+                    "autentication" => true
+                ]
+            ]
         ];
     }
 }

@@ -3,7 +3,9 @@
 namespace Meister\Meister;
 
 use Meister\Meister\Interfaces\InitInterface;
+use Meister\Meister\Libraries\Annotation;
 use Meister\Meister\Libraries\Mongo;
+use Meister\Meister\Libraries\Retorno;
 use Pimple\Container;
 use Symfony\Component\Yaml\Yaml;
 
@@ -32,17 +34,24 @@ abstract class init implements InitInterface{
             $this->config       = $this->loadConfig();
 
             $this->app['cache'] = $this->getCache();
+            $this->app['api']   = false;
 
             $router = filter_input(INPUT_GET, 'router');
 
             $this->checkRota($router);
 
+            $ann = new Annotation($this->app,$this->config);
+            
+            $ann->validation($this->app['Contr'],$this->action);
+            
             $action = $this->action;
 
             $this->controller->$action();
 
         }catch (\Exception $e){
-            $this->twigException($e);
+            $retorno = new Retorno($this->app,$this->config);
+
+            $retorno->twigException($e);
         }
     }
 
@@ -50,9 +59,9 @@ abstract class init implements InitInterface{
         $rotas = $this->getRotas();
         $rota = "";
 
-        foreach($rotas as $ro => $we){
-            if($we == "/{$router}"){
-                $rota = $ro;
+        foreach($rotas as $we){
+            if($we['rota'] == "/{$router}"){
+                $rota = $we;
                 break;
             }
         }
@@ -61,7 +70,11 @@ abstract class init implements InitInterface{
             throw new \Exception('Router not found',420404);
         }
 
-        list($modulo,$controller,$action) = explode('::', $rota);
+        if($rota['options'] && $rota['options']['api']){
+            $this->app['api'] = true;
+        }
+
+        list($modulo,$controller,$action) = explode('::', $rota['destino']);
 
         $se = (array_search($modulo,$this->config['modules']));
         
@@ -78,6 +91,7 @@ abstract class init implements InitInterface{
         $this->app['Controller']    = $controller;
         $this->app['Action']        = $action;
         $this->app['Module']        = 'src\\'.$modulo;
+        $this->app['Contr']         = $c;
 
         $this->app['ModuleDir']     = str_replace('/web/app.php','',$_SERVER['SCRIPT_FILENAME']).'/src/'.$modulo;
         $this->app['Modules']       = str_replace('/web/app.php','',$_SERVER['SCRIPT_FILENAME']).'/src/';
@@ -104,42 +118,6 @@ abstract class init implements InitInterface{
 
         throw  new \Exception('Config file not found',420502);
 
-    }
-
-    private function twigException(\Exception $e){
-
-        $data['message']= $e->getMessage();
-        $data['string'] = $e->getTraceAsString();
-
-        $trace = $e->getTrace();
-
-        foreach($trace as $key => $val) {
-            $file = explode('/',$val['file']);
-            $class = explode('\\',$val['class']);
-
-            $trace[$key]['filename']  = array_pop($file);
-            $trace[$key]['classname'] = array_pop($class);
-        }
-
-        $file = explode('/',$e->getFile());
-        $data['onTrace'] = [
-            "file" => $e->getFile(),
-            "line" => $e->getLine(),
-            "filename" => array_pop($file)
-        ];
-        $data['traces'] = $trace;
-
-        $data['debug'] = $this->config['twig']['debug'];
-        $loader = new \Twig_Loader_Filesystem(__DIR__.'/Views/');
-
-        $twigConfig = [];
-
-        $twigConfig["debug"] = $this->config['twig']['debug'];
-
-        $twig = new \Twig_Environment($loader, $twigConfig);
-
-        echo $twig->render('error.html.twig',$data);
-        exit();
     }
 
     private function newDB(){

@@ -2,8 +2,8 @@
 
 namespace Meister\Meister\Interfaces;
 
-interface InitInterface
-{
+interface InitInterface{
+    
     public function getRotas();
 
     public function getConfig($ambiente);
