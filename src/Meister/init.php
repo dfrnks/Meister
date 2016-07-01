@@ -5,7 +5,9 @@ namespace Meister\Meister;
 use Meister\Meister\Interfaces\InitInterface;
 use Meister\Meister\Libraries\Annotation;
 use Meister\Meister\Libraries\Mongo;
+use Meister\Meister\Libraries\Redis;
 use Meister\Meister\Libraries\Retorno;
+use Meister\Meister\Libraries\Session;
 use Pimple\Container;
 use Symfony\Component\Yaml\Yaml;
 
@@ -20,6 +22,10 @@ abstract class init implements InitInterface{
     private $config;
 
     private $db;
+
+    private $cache;
+    
+    private $session;
 
     private $ambiente;
     
@@ -96,9 +102,9 @@ abstract class init implements InitInterface{
         $this->app['ModuleDir']     = str_replace('/web/app.php','',$_SERVER['SCRIPT_FILENAME']).'/src/'.$modulo;
         $this->app['Modules']       = str_replace('/web/app.php','',$_SERVER['SCRIPT_FILENAME']).'/src/';
 
-        $this->db = $this->newDB();
 
-        $this->controller = new $c($this->app,$this->config,$this->db);
+        
+        $this->controller = new $c($this->app,$this->config,$this->db,$this->session);
 
         if(!method_exists($this->controller,$action)){
             throw new \Exception('Method not found',422404);
@@ -120,6 +126,12 @@ abstract class init implements InitInterface{
 
     }
 
+    private function startLibs(){
+        $this->cache = $this->Cache();
+        $this->db = $this->newDB();
+        $this->session = $this->Session();
+    }
+
     private function newDB(){
         $type = $this->config['database']['type'];
         
@@ -136,5 +148,29 @@ abstract class init implements InitInterface{
         }
         
         return $db;
+    }
+    
+    private function Cache(){
+        $type = $this->config['cache']['type'];
+
+        switch ($type){
+            case 'redis':
+                $cache = new Redis($this->config);
+                break;
+            default;
+                $cache = null;
+        }
+
+        if(!$cache){
+            throw new \Exception('Type Cache not found');
+        }
+
+        return $cache;
+    }
+    
+    private function Session(){
+        $session = new Session($this->cache);
+        
+        return $session;
     }
 }

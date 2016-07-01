@@ -2,9 +2,11 @@
 
 namespace Meister\Meister;
 
+use Meister\Meister\Interfaces\CacheInterface;
 use Meister\Meister\Interfaces\DatabaseInterface;
 use Meister\Meister\Libraries\Data;
 use Meister\Meister\Libraries\Retorno;
+use Meister\Meister\Libraries\Session;
 use Pimple\Container;
 
 class Controller {
@@ -14,10 +16,13 @@ class Controller {
     public $db;
 
     public $config;
+    
+    public $session;
 
-    public function __construct(Container $app, array $config, DatabaseInterface $db){
+    public function __construct(Container $app, array $config, DatabaseInterface $db, Session $session){
         $this->app    = $app;
         $this->db     = $db;
+        $this->session= $session;
         $this->config = $config;
     }
 
