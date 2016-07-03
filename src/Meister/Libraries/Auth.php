@@ -2,15 +2,11 @@
 
 namespace Meister\Meister\Libraries;
 
-use app\libs\Email;
 use Lcobucci\JWT\Builder;
 use Lcobucci\JWT\Parser;
 use Lcobucci\JWT\Signer\Key;
 use Lcobucci\JWT\Signer\Rsa\Sha512;
 use Lcobucci\JWT\ValidationData;
-use Main\app\Controller\hashController;
-use Main\app\Document\Sessoes;
-use Main\app\Document\Users;
 use Meister\Meister\Interfaces\DatabaseInterface;
 use Pimple\Container;
 
@@ -27,6 +23,8 @@ class Auth {
     private $config;
     
     private $session;
+    
+    private $SessionEntity;
 
     public function __construct(Container $app, DatabaseInterface $db, array $config, Session $session){
         $this->app     = $app;
@@ -34,6 +32,8 @@ class Auth {
         $this->config  = $config;
         $this->session = $session;
         $this->entity  = $this->config['auth']['entity'];
+        
+        $this->SessionEntity = $this->config['session']['entity'];
     }
 
     /**
@@ -53,12 +53,12 @@ class Auth {
         $pes = $this->db->doc()->getRepository($this->entity)->findAll();
 
         if(empty($pes)){
-            $this->db->insert(new Users(),[
-                "nome" => "Admin",
+            $this->db->insert(new $this->entity(),[
+                "nome"     => "Admin",
                 $fiedlUser => "admin@mail.com",
                 "password" => Crypt::gpass("admin"),
-                "ativo" => true,
-                "rules" => ["DEV","ADM"]
+                "ativo"    => true,
+                "rules"    => ["DEV","ADM"]
             ]);
 
             $pessoa = $this->db->doc()->getRepository($this->entity)->findOneBy([
@@ -99,8 +99,8 @@ class Auth {
         $pes = Data::serialize($pessoa);
 
         $this->session->set('idusuario', $pessoa->getId());
-        $this->session->set('username', $pessoa->$fiedlUser());
-        $this->session->set('User',$pes);
+        $this->session->set('username',  $pessoa->$fiedlUser());
+        $this->session->set('User',      $pes);
         $this->session->set('Permission',$pessoa->getRules());
     }
 
@@ -183,7 +183,7 @@ class Auth {
         $tkn = ob_get_contents();
         ob_end_clean();
 
-        $this->db->insert(new Sessoes(),[
+        $this->db->insert(new $this->SessionEntity(),[
             "user"      => $id,
             "uid"       => $uid,
             "browser"   => $_SERVER['HTTP_USER_AGENT']
@@ -224,7 +224,7 @@ class Auth {
             throw new \Exception("Credentials incorrect",403);
         }
 
-        $sessao = $this->db->doc()->getRepository('Main\app\Document\Sessoes')->findOneBy(['uid' => $uid]);
+        $sessao = $this->db->doc()->getRepository($this->SessionEntity)->findOneBy(['uid' => $uid]);
 
         if(empty($sessao)){
             throw new \Exception("Session not found",403);

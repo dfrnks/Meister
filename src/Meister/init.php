@@ -40,7 +40,7 @@ abstract class init implements InitInterface{
 
             $this->loadConfig();
 
-            $this->app['api']   = false;
+            $this->app['api'] = false;
 
             $router = filter_input(INPUT_GET, 'router');
 
@@ -48,7 +48,7 @@ abstract class init implements InitInterface{
 
             $ann = new Annotation($this->app,$this->config);
             
-            $ann->validation($this->app['Contr'],$this->action);
+            $ann->validation($this->app['Contr'],$this->action,$this->app['options']);
             
             $action = $this->action;
 
@@ -62,7 +62,7 @@ abstract class init implements InitInterface{
     }
 
     private function checkRota($router){
-        $rotas = $this->getRotas();
+        $rotas = $this->getRouters();
         $rota = "";
 
         foreach($rotas as $we){
@@ -82,22 +82,13 @@ abstract class init implements InitInterface{
 
         list($modulo,$controller,$action) = explode('::', $rota['destino']);
 
-        $se = (array_search($modulo,$this->config['modules']));
-        
-        if(is_bool($se) && !$se){
-            throw new \Exception('Modulo não registrado');
-        }
-
-        $c = 'src\\'.$modulo.'\\Controller\\'.$controller;
-
-        if(!class_exists($c)){
-            throw new \Exception("Classe not found ($c)",421404);
-        }
+        $c = $this->getController($modulo,$controller);
 
         $this->app['Controller']    = $controller;
         $this->app['Action']        = $action;
         $this->app['Module']        = 'src\\'.$modulo;
         $this->app['Contr']         = $c;
+        $this->app['options']       = $rota['options'];
 
         $this->app['ModuleDir']     = str_replace('/web/app.php','',$_SERVER['SCRIPT_FILENAME']).'/src/'.$modulo;
 
@@ -113,6 +104,50 @@ abstract class init implements InitInterface{
 
     }
 
+    private function getRouters(){
+        $router = [
+            [
+                "rota" => "/login",
+                "destino" => "Meister::AuthController::loginAction",
+                "options" =>[
+                    "api" => true,
+                    "request" => ["POST"]
+                ]
+            ]
+        ];
+
+        $rotas = $this->getRotas();
+
+        return array_merge($router,$rotas);
+    }
+
+    private function getController($modulo,$controller){
+
+        $MModules = [
+                "Meister"
+            ];
+
+        $se = (array_search($modulo,$MModules));
+
+        if($se === 0 || $se){
+            $c = 'Meister\\'.$modulo.'\\Controller\\'.$controller;
+        }else{
+            $se = (array_search($modulo,$this->config['modules']));
+
+            if(is_bool($se) && !$se){
+                throw new \Exception('Modulo não registrado');
+            }
+
+            $c = 'src\\'.$modulo.'\\Controller\\'.$controller;
+        }
+
+        if(!class_exists($c)){
+            throw new \Exception("Controller not found ($c)",421404);
+        }
+
+        return $c;
+    }
+
     public function loadConfig(){
 
         $file = $this->getConfig($this->ambiente);
@@ -123,12 +158,11 @@ abstract class init implements InitInterface{
         }
 
         throw  new \Exception('Config file not found',420502);
-
     }
 
     public function start(){
-        $this->app['Modules']       = str_replace('/web/app.php','',$_SERVER['SCRIPT_FILENAME']).'/src/';
-        $this->app['BASE_DIR']      = $this->getBaseDir();
+        $this->app['Modules']  = str_replace('/web/app.php','',$_SERVER['SCRIPT_FILENAME']).'/src/';
+        $this->app['BASE_DIR'] = $this->getBaseDir();
 
         $this->app['cache'] = $this->getCache();
 
@@ -137,6 +171,8 @@ abstract class init implements InitInterface{
         $this->session = $this->Session();
         
         $this->app['auth'] = $this->Auth();
+
+        $this->app['data'] = (array) json_decode(file_get_contents('php://input'));
     }
 
     public function newDB(){
@@ -185,6 +221,5 @@ abstract class init implements InitInterface{
         $auth = new Auth($this->app, $this->db, $this->config, $this->session);
 
         return $auth;
-
     }
 }

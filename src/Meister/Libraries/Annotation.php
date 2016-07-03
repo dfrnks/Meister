@@ -39,7 +39,7 @@ class Annotation {
      * @return mixed
      * @throws \Exception
      */
-    public function validation($controller,$method) {
+    public function validation($controller,$method,$options) {
         
         $classReflector = new \ReflectionClass($controller);
         $classAnnotations = new Annotations($classReflector);
@@ -111,15 +111,40 @@ class Annotation {
         }
 
         if(array_key_exists($method,$methodAnnotations) && $methodAnnotations[$method]->hasAnnotation('api') === true){
-            if(!$this->app['api']){
-                throw new \Exception('Requisição inválida',503);
-            }
+            $return['api'] = true;
+        }else{
+            $return['api'] = false;
         }
 
         if(array_key_exists($method,$methodAnnotations) && $methodAnnotations[$method]->hasAnnotation('permission') === true){
             $this->checkPermission($methodAnnotations[$method]['permission']);
         }
 
+        /**
+         * Valida Options
+         */
+
+        if(array_key_exists('request',$options)){
+            $this->requestValidation($options['request']);
+        }
+
+        if(array_key_exists('permission',$options)){
+            $this->checkPermission($options['permission']);
+        }
+
+        if(array_key_exists('authenticated',$options)){
+            if($options['authenticated'])
+                $this->authenticatedValidation();
+        }
+
+        if(array_key_exists('notview',$options)){
+            $return['view'] = false;
+        }
+
+        if(array_key_exists('api',$options)){
+            $return['api'] = true;
+        }
+        
         return $return;
 
     }
