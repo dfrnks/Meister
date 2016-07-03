@@ -2,7 +2,6 @@
 
 namespace Meister\Meister;
 
-use Meister\Meister\Interfaces\CacheInterface;
 use Meister\Meister\Interfaces\DatabaseInterface;
 use Meister\Meister\Libraries\Data;
 use Meister\Meister\Libraries\Retorno;

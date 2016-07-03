@@ -8,12 +8,38 @@ class Session {
 
     private $cache;
 
-    public function __construct(CacheInterface $cache){
+    private $time;
+
+    private $prefix;
+
+    public function __construct(CacheInterface $cache,$time){
         $this->cache = $cache;
+        $this->time  = $time;
+        $this->prefix = $this->getPrefix();
     }
 
     private function getPrefix() {
-        return md5(__DIR__);
+
+        if(isset($_COOKIE['uid'])){
+            $uidSession = $_COOKIE['uid'];
+
+            setcookie("uid", $uidSession, time() + $this->time);
+
+            $values = $this->cache->getAll($uidSession.'/');
+            foreach ($values as $val){
+                $this->cache->expire($val,$this->time);
+            }
+
+//            $this->cache->expire($uidSession.'/',$this->time);
+
+            return $uidSession.'/';
+        }
+
+        $uidSession = Data::uid();
+
+        setcookie("uid", $uidSession, time() + $this->time);
+
+        return $uidSession.'/';
     }
 
     /**
@@ -21,8 +47,8 @@ class Session {
      * @return mixed
      */
     public function get($var) {
-        if($this->exist($var)) {
-            return $this->cache->get($this->getPrefix().$var);
+        if($this->exist($this->prefix.$var)) {
+            return $this->cache->get($this->prefix.$var);
         }
 
         return null;
@@ -34,21 +60,21 @@ class Session {
      * @return mixed
      */
     public function set($var,$value) {
-        return $this->cache->set($this->getPrefix().$var,$value);
+        return $this->cache->set($this->prefix.$var,$value,$this->time);
     }
 
     /**
      * @return mixed
      */
     public function getAll() {
-        return $this->cache->getAll($this->getPrefix());
+        return $this->cache->getAll($this->prefix);
     }
 
     /**
      * @param $var
      */
     public function remove($var) {
-       $this->cache->remove($this->getPrefix().$var);
+       $this->cache->remove($this->prefix.$var);
     }
 
     /**
@@ -56,17 +82,14 @@ class Session {
      * @return bool
      */
     public function exist($var) {
-        $session = (isset($_SESSION[$this->getPrefix()])?$_SESSION[$this->getPrefix()]:$_SESSION);
-
-        if(array_key_exists($var,$session)) {
-            return true;
-        }
-
-        return false;
+        return $this->cache->exists($var);
     }
     
     public function destroy() {
-        unset($_SESSION[$this->getPrefix()]);
+        $values = $this->cache->getAll($this->prefix);
+        foreach ($values as $val){
+            $this->cache->remove($val,false);
+        }
     }
 
     public function Cache(){

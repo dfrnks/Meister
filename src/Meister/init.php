@@ -102,7 +102,7 @@ abstract class init implements InitInterface{
         $this->app['ModuleDir']     = str_replace('/web/app.php','',$_SERVER['SCRIPT_FILENAME']).'/src/'.$modulo;
         $this->app['Modules']       = str_replace('/web/app.php','',$_SERVER['SCRIPT_FILENAME']).'/src/';
 
-
+        $this->startLibs();
         
         $this->controller = new $c($this->app,$this->config,$this->db,$this->session);
 
@@ -169,7 +169,7 @@ abstract class init implements InitInterface{
     }
     
     private function Session(){
-        $session = new Session($this->cache);
+        $session = new Session($this->cache,$this->config["session"]["time"]);
         
         return $session;
     }

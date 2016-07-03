@@ -3,12 +3,18 @@ twig:
   debug: false
 
 database:
-  type: mongo
   name: MONGODB
   host: 127.0.0.1
   port:
   user:
   pass:
+
+cache:
+  type: redis
+  host: 127.0.0.1
+
+session:
+  time: 60
 
 mail:
   stmp: true
@@ -19,8 +25,6 @@ mail:
   from:
 
 field_user: email
-
-time_session: 3600
 
 compress: true
 

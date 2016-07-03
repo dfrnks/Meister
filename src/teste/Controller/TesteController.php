@@ -17,8 +17,30 @@ class TesteController extends Controller {
      */
     public function indexAction() {
 
-        $user = $this->db->doc()->getRepository(get_class(new Users()))->findAll();
+//        $this->session->set('teste',time());
+//        $this->session->set('teste1',time());
+//        $this->session->set('teste2',time());
+//        $this->session->set('teste3',time());
 
-        $this->Render(["nome" => $this->data($user)]);
+//        for($x=0; $x<1000; $x++){
+//            $this->session->set('teste'.$x,time());
+//        }
+//        $this->session->Cache()->set('teste','asd');
+
+//        $this->session->Cache()->remove('teste');
+
+        $this->session->destroy();
+
+//        $this->session->remove('teste');
+
+        var_dump($this->session->Cache()->get('teste'));
+        var_dump($this->session->Cache()->getAll());
+        var_dump($this->session->getAll());
+        var_dump($this->session->get('teste0'));
+
+//        $user = $this->db->doc()->getRepository(get_class(new Users()))->findAll();
+//
+//
+//        $this->Render(["nome" => $this->data($user)]);
     }
 }

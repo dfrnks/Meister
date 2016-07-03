@@ -6,8 +6,6 @@ use Meister\Meister\Interfaces\CacheInterface;
 
 class Redis implements CacheInterface{
     
-    private $cache = "cache_0022125522552";
-    
     private $config = [];
 
     private $redis;
@@ -16,6 +14,10 @@ class Redis implements CacheInterface{
         $this->config = $config;
 
         $this->redis = $this->connect();
+    }
+
+    private function getPrefix() {
+        return md5(__DIR__).'/';
     }
 
     /**
@@ -30,26 +32,33 @@ class Redis implements CacheInterface{
     }
 
     public function get($var = "") {
-        return $this->redis->get($var);
+        return $this->redis->get($this->getPrefix().$var);
     }
 
     public function getAll($var = "") {
-        return $this->redis->keys($var . "*");
+        return $this->redis->keys($this->getPrefix().$var . "*");
     }
 
-    public function set($var,$value, $timeout = null) {
-        return $this->redis->setex($var,$timeout,$value);
+    public function set($var,$value, $timeout = 86400) {
+        return $this->redis->setex($this->getPrefix().$var,$timeout,$value);
     }
 
-    public function remove($var) {
+    public function remove($var,$prefix = true) {
+        if($prefix){
+            return $this->redis->del($this->getPrefix().$var);
+        }
         return $this->redis->del($var);
     }
 
+    public function expire($key,$timeout){
+        return $this->redis->expire( $key, $timeout );
+    }
+
     public function destroy() {
-        return $this->redis->flushAll();
+//        return $this->redis->flushAll();
     }
 
     public function exists($var){
-       return $this->redis->exists($var);
+       return $this->redis->exists($this->getPrefix().$var);
     }
 }
