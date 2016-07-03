@@ -8,5 +8,7 @@ interface InitInterface{
 
     public function getConfig($ambiente);
 
+    public function getBaseDir();
+
     public function getCache();
 }

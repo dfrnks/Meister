@@ -10,6 +10,10 @@ class AppInit extends init {
         return __DIR__ . '/config/config_'.$ambiente.'.yml';
     }
 
+    public function getBaseDir(){
+        return __DIR__ .'/..';
+    }
+
     public function getCache(){
         return [
             "twig" => __DIR__.'/cache/twig',
@@ -37,4 +41,5 @@ class AppInit extends init {
             ]
         ];
     }
+    
 }

@@ -11,24 +11,29 @@ use Lcobucci\JWT\ValidationData;
 use Main\app\Controller\hashController;
 use Main\app\Document\Sessoes;
 use Main\app\Document\Users;
+use Meister\Meister\Interfaces\DatabaseInterface;
 use Pimple\Container;
 
 class Auth {
 
-    private $entity = "Main\\app\\Document\\Users";
-
     private $private = "5n)PE`X6@,2=EUZ{b(YF~IqV?w/+Yc btcm{nsvF`xpkf~JsISit]=4?Xl#1oT}F";
 
-    /**
-     * @var Mongo
-     */
+    private $entity;
+    
+    private $app;
+    
     private $db;
 
-    private $app;
+    private $config;
+    
+    private $session;
 
-    public function __construct($app){
-        $this->db  = $app["db"];
-        $this->app = $app;
+    public function __construct(Container $app, DatabaseInterface $db, array $config, Session $session){
+        $this->app     = $app;
+        $this->db      = $db;
+        $this->config  = $config;
+        $this->session = $session;
+        $this->entity  = $this->config['auth']['entity'];
     }
 
     /**
@@ -39,13 +44,13 @@ class Auth {
      */
     public function login($_username,$_password) {
 
-        $fiedlUser = $this->app["config"]["field_user"];
+        $fiedlUser = $this->config["auth"]["field"];
 
         if(empty($fiedlUser)){
             $fiedlUser = "username";
         }
 
-        $pes = $this->db->db()->getRepository($this->entity)->findAll();
+        $pes = $this->db->doc()->getRepository($this->entity)->findAll();
 
         if(empty($pes)){
             $this->db->insert(new Users(),[
@@ -56,11 +61,11 @@ class Auth {
                 "rules" => ["DEV","ADM"]
             ]);
 
-            $pessoa = $this->db->db()->getRepository($this->entity)->findOneBy([
+            $pessoa = $this->db->doc()->getRepository($this->entity)->findOneBy([
                 $fiedlUser => "admin@mail.com"
             ]);
         }else{
-            $pessoa = $this->db->db()->getRepository($this->entity)->findOneBy([
+            $pessoa = $this->db->doc()->getRepository($this->entity)->findOneBy([
                 $fiedlUser => $_username
             ]);
         }
@@ -89,33 +94,33 @@ class Auth {
 
     public function setSession($pessoa){
 
-        $fiedlUser = 'get'.ucfirst($this->app["config"]["field_user"]);
+        $fiedlUser = 'get'.ucfirst($this->config["auth"]["field"]);
 
         $pes = Data::serialize($pessoa);
 
-        Session::set('idusuario', $pessoa->getId());
-        Session::set('username', $pessoa->$fiedlUser());
-        Session::set('User',$pes);
-        Session::set('Permission',$pessoa->getRules());
+        $this->session->set('idusuario', $pessoa->getId());
+        $this->session->set('username', $pessoa->$fiedlUser());
+        $this->session->set('User',$pes);
+        $this->session->set('Permission',$pessoa->getRules());
     }
 
-    public static function logout() {
-        Session::destroy();
+    public function logout() {
+        $this->session->destroy();
     }
 
-    public static function isLogged() {
-//        if(Session::exist('uid')) {
+    public function isLogged() {
+//        if($this->session->exist('uid')) {
 //            return true;
 //        }
 
         return false;
     }
 
-    public static function checkRules($permission){
+    public function checkRules($permission){
         $rules = [];
 
-        if(Session::exist('Permission')){
-            $rules = Session::get('Permission');
+        if($this->session->exist('Permission')){
+            $rules = $this->session->get('Permission');
         }
 
         if(array_search("DEV", $rules) === 0 || array_search("DEV", $rules)){
@@ -138,8 +143,8 @@ class Auth {
         return false;
     }
 
-    public static function getUser($fild=null) {
-        $user = Session::get('User');
+    public function getUser($fild=null) {
+        $user = $this->session->get('User');
 
         if($fild){
             return array_key_exists($fild, $user) ? $user[$fild] : null;
@@ -165,7 +170,7 @@ class Auth {
             ->setIssuer($_SERVER['REQUEST_SCHEME'].'://'.$_SERVER['HTTP_HOST'])
             ->setIssuedAt(time())
             ->setNotBefore(time() + 1)
-            ->setExpiration(time() + $this->app['config']['time_session'])
+            ->setExpiration(time() + $this->config['session']['time'])
             ->setId($uid,true)
             ->set('id'  ,$id)
             ->set('sys' ,md5($_SERVER['HTTP_USER_AGENT']))
@@ -184,7 +189,7 @@ class Auth {
             "browser"   => $_SERVER['HTTP_USER_AGENT']
         ]);
 
-        Session::set('uid',$uid);
+        $this->session->set('uid',$uid);
 
         return $tkn;
     }
@@ -219,7 +224,7 @@ class Auth {
             throw new \Exception("Credentials incorrect",403);
         }
 
-        $sessao = $this->db->db()->getRepository('Main\app\Document\Sessoes')->findOneBy(['uid' => $uid]);
+        $sessao = $this->db->doc()->getRepository('Main\app\Document\Sessoes')->findOneBy(['uid' => $uid]);
 
         if(empty($sessao)){
             throw new \Exception("Session not found",403);
@@ -242,14 +247,13 @@ class Auth {
 
         // Envia email com alguma coisa para ele.
 
-        $fiedlUser = $this->app["config"]["field_user"];
-        $fiedlUser = $this->app["config"]["field_user"];
+        $fiedlUser = $this->config["auth"]["field"];
 
         if(empty($fiedlUser)){
             $fiedlUser = "username";
         }
 
-        $pessoa = $this->db->db()->getRepository($this->entity)->findOneBy([
+        $pessoa = $this->db->doc()->getRepository($this->entity)->findOneBy([
             $fiedlUser => $_username
         ]);
 
@@ -261,7 +265,7 @@ class Auth {
             "id" => $pessoa['id']
         ],$this->app['WEB_LINK'].'api/auth/recover',$validade,true,$pessoa);
 
-        $e = new Email($this->app);
+        $e = new Email();
 
         $e->sendMail($pessoa['email'],'Token',$this->app['WEB_LINK'].'api/hash/check/token/'.$token,true);
 

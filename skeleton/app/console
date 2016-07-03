@@ -3,11 +3,13 @@
 
 require_once __DIR__.'/bootstrap.php';
 
-$config = new \app\Config();
-$config = $config->get();
+$init = new \app\AppInit();
+$init->loadConfig()
+     ->start();
 
 $helperSet = new \Symfony\Component\Console\Helper\HelperSet(array(
-    'dm' => new \Doctrine\ODM\MongoDB\Tools\Console\Helper\DocumentManagerHelper((new \libs\Mongo($config))->db()),
+    'dm' => new \Doctrine\ODM\MongoDB\Tools\Console\Helper\DocumentManagerHelper($init->newDB()->doc()),
+    'init' => new \Meister\Meister\Console\MeisterHelper($init)
 ));
 
 $app = new \Symfony\Component\Console\Application('Console - Meister');
@@ -25,9 +27,9 @@ $app->addCommands(array(
 ));
 
 $app->addCommands(array(
-    new \app\libs\Console\hello(),
-    new \app\libs\Console\privatekey(),
-    new \app\libs\Console\backup()
+    new \Meister\Meister\Console\hello(),
+    new \Meister\Meister\Console\privatekey(),
+    new \Meister\Meister\Console\backup()
 ));
 
 $app->run();

@@ -24,7 +24,9 @@ mail:
   pass:
   from:
 
-field_user: email
+auth:
+  field: email
+  entity: src\teste\Document\Users
 
 modules:
  - app

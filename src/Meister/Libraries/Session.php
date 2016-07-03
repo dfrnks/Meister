@@ -30,8 +30,6 @@ class Session {
                 $this->cache->expire($val,$this->time);
             }
 
-//            $this->cache->expire($uidSession.'/',$this->time);
-
             return $uidSession.'/';
         }
 

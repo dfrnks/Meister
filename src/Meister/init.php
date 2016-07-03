@@ -4,6 +4,7 @@ namespace Meister\Meister;
 
 use Meister\Meister\Interfaces\InitInterface;
 use Meister\Meister\Libraries\Annotation;
+use Meister\Meister\Libraries\Auth;
 use Meister\Meister\Libraries\Mongo;
 use Meister\Meister\Libraries\Redis;
 use Meister\Meister\Libraries\Retorno;
@@ -37,9 +38,8 @@ abstract class init implements InitInterface{
     public function Run(){
         try{
 
-            $this->config       = $this->loadConfig();
+            $this->loadConfig();
 
-            $this->app['cache'] = $this->getCache();
             $this->app['api']   = false;
 
             $router = filter_input(INPUT_GET, 'router');
@@ -100,9 +100,8 @@ abstract class init implements InitInterface{
         $this->app['Contr']         = $c;
 
         $this->app['ModuleDir']     = str_replace('/web/app.php','',$_SERVER['SCRIPT_FILENAME']).'/src/'.$modulo;
-        $this->app['Modules']       = str_replace('/web/app.php','',$_SERVER['SCRIPT_FILENAME']).'/src/';
 
-        $this->startLibs();
+        $this->start();
         
         $this->controller = new $c($this->app,$this->config,$this->db,$this->session);
 
@@ -114,25 +113,33 @@ abstract class init implements InitInterface{
 
     }
 
-    private function loadConfig(){
+    public function loadConfig(){
 
         $file = $this->getConfig($this->ambiente);
 
         if(file_exists($file)){
-            return Yaml::parse(file_get_contents($file));
+            $this->config = Yaml::parse(file_get_contents($file));
+            return $this;
         }
 
         throw  new \Exception('Config file not found',420502);
 
     }
 
-    private function startLibs(){
-        $this->cache = $this->Cache();
-        $this->db = $this->newDB();
+    public function start(){
+        $this->app['Modules']       = str_replace('/web/app.php','',$_SERVER['SCRIPT_FILENAME']).'/src/';
+        $this->app['BASE_DIR']      = $this->getBaseDir();
+
+        $this->app['cache'] = $this->getCache();
+
+        $this->cache   = $this->Cache();
+        $this->db      = $this->newDB();
         $this->session = $this->Session();
+        
+        $this->app['auth'] = $this->Auth();
     }
 
-    private function newDB(){
+    public function newDB(){
         $type = $this->config['database']['type'];
         
         switch ($type){
@@ -172,5 +179,12 @@ abstract class init implements InitInterface{
         $session = new Session($this->cache,$this->config["session"]["time"]);
         
         return $session;
+    }
+
+    private function Auth(){
+        $auth = new Auth($this->app, $this->db, $this->config, $this->session);
+
+        return $auth;
+
     }
 }

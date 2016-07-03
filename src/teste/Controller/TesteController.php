@@ -29,18 +29,21 @@ class TesteController extends Controller {
 
 //        $this->session->Cache()->remove('teste');
 
-        $this->session->destroy();
-
-//        $this->session->remove('teste');
-
-        var_dump($this->session->Cache()->get('teste'));
-        var_dump($this->session->Cache()->getAll());
-        var_dump($this->session->getAll());
-        var_dump($this->session->get('teste0'));
+//        $this->session->destroy();
+//
+////        $this->session->remove('teste');
+//
+//        var_dump($this->session->Cache()->get('teste'));
+//        var_dump($this->session->Cache()->getAll());
+//        var_dump($this->session->getAll());
+//        var_dump($this->session->get('teste0'));
 
 //        $user = $this->db->doc()->getRepository(get_class(new Users()))->findAll();
 //
 //
 //        $this->Render(["nome" => $this->data($user)]);
+
+        var_dump($this->app['auth']->login('douglasfrancardoso@gmail.com','asdasd'));
+
     }
 }

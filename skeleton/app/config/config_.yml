@@ -17,6 +17,10 @@ cache:
 session:
   time: 60
 
+auth:
+  field: email
+  entity: src\teste\Document\Users
+
 mail:
   stmp: true
   host:

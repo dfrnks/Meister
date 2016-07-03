@@ -19,10 +19,10 @@ class Controller {
     public $session;
 
     public function __construct(Container $app, array $config, DatabaseInterface $db, Session $session){
-        $this->app    = $app;
-        $this->db     = $db;
-        $this->session= $session;
-        $this->config = $config;
+        $this->app     = $app;
+        $this->db      = $db;
+        $this->session = $session;
+        $this->config  = $config;
     }
 
     protected function Render($data){
