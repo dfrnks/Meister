@@ -32,7 +32,7 @@ class authController extends Controller {
 
         $da = $auth->checkToken(Data::getHeader('X-Token'));
 
-        $pessoa = $this->app['db']->db()->getRepository("Main\\app\\Document\\Users")->findOneBy([
+        $pessoa = $this->app['db']->db()->getRepository($this->config['auth']['entity'])->findOneBy([
             "id" => $da["id"]
         ]);
 
