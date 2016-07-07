@@ -25,11 +25,11 @@ abstract class init implements InitInterface{
     private $db;
 
     private $cache;
-    
+
     private $session;
 
     private $ambiente;
-    
+
     public function __construct($ambiente = null){
         $this->app          = new Container();
         $this->ambiente     = $ambiente;
@@ -40,16 +40,14 @@ abstract class init implements InitInterface{
 
             $this->loadConfig();
 
-            $this->app['api'] = false;
-
             $router = filter_input(INPUT_GET, 'router');
 
             $this->checkRota($router);
 
             $ann = new Annotation($this->app,$this->config);
-            
+
             $ann->validation($this->app['Contr'],$this->action,$this->app['options']);
-            
+
             $action = $this->action;
 
             $this->controller->$action();
@@ -76,9 +74,9 @@ abstract class init implements InitInterface{
             throw new \Exception('Router not found',420404);
         }
 
-        if($rota['options'] && $rota['options']['api']){
-            $this->app['api'] = true;
-        }
+//        if($rota['options'] && array_key_exists('api',$rota['options'])){
+//            $this->app['api'] = true;
+//        }
 
         list($modulo,$controller,$action) = explode('::', $rota['destino']);
 
@@ -93,7 +91,7 @@ abstract class init implements InitInterface{
         $this->app['ModuleDir']     = str_replace('/web/app.php','',$_SERVER['SCRIPT_FILENAME']).'/src/'.$modulo;
 
         $this->start();
-        
+
         $this->controller = new $c($this->app,$this->config,$this->db,$this->session);
 
         if(!method_exists($this->controller,$action)){
@@ -118,6 +116,7 @@ abstract class init implements InitInterface{
                 "rota" => "/logout",
                 "destino" => "Meister::AuthController::logoutAction",
                 "options" =>[
+//                    "api" => true,
                     "notview" => true
                 ]
             ],
@@ -139,8 +138,8 @@ abstract class init implements InitInterface{
     private function getController($modulo,$controller){
 
         $MModules = [
-                "Meister"
-            ];
+            "Meister"
+        ];
 
         $se = (array_search($modulo,$MModules));
 
@@ -178,13 +177,15 @@ abstract class init implements InitInterface{
     public function start(){
         $this->app['Modules']  = str_replace('/web/app.php','',$_SERVER['SCRIPT_FILENAME']).'/src/';
         $this->app['BASE_DIR'] = $this->getBaseDir();
+        $this->app['WEB_DIR']  = str_replace('app.php','',$_SERVER['SCRIPT_NAME']);
+        $this->app['WEB_LINK'] = $this->app['WEB_DIR'];
 
         $this->app['cache'] = $this->getCache();
 
         $this->cache   = $this->Cache();
         $this->db      = $this->newDB();
         $this->session = $this->Session();
-        
+
         $this->app['auth'] = $this->Auth();
 
         $this->app['data'] = (array) json_decode(file_get_contents('php://input'));
@@ -192,7 +193,7 @@ abstract class init implements InitInterface{
 
     public function newDB(){
         $type = $this->config['database']['type'];
-        
+
         switch ($type){
             case 'mongo':
                 $db = new Mongo($this->config,$this->app);
@@ -200,14 +201,14 @@ abstract class init implements InitInterface{
             default;
                 $db = null;
         }
-        
+
         if(!$db){
             throw new \Exception('Type database not found');
         }
-        
+
         return $db;
     }
-    
+
     private function Cache(){
         $type = $this->config['cache']['type'];
 
@@ -225,10 +226,10 @@ abstract class init implements InitInterface{
 
         return $cache;
     }
-    
+
     private function Session(){
         $session = new Session($this->cache,$this->config["session"]["time"]);
-        
+
         return $session;
     }
 

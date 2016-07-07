@@ -18,7 +18,7 @@ class Retorno{
 
     public function twig($data){
         $view_dir = [
-            __DIR__.'/Views',
+            __DIR__.'/../Views',
             $this->app['ModuleDir'].'/Views'
         ];
 
@@ -26,6 +26,13 @@ class Retorno{
 
         if($this->config['twig']['cache']){
             $twigConfig["cache"] = $this->app['cache']['twig'];
+        }
+
+        foreach($this->config['modules'] as $app) {
+            $dir = $this->app['Modules'].$app.'/Views';
+            if(file_exists($dir)) {
+                $view_dir[] = $dir;
+            }
         }
 
         $twigConfig["debug"] = $this->config['twig']['debug'];
@@ -39,7 +46,7 @@ class Retorno{
          * Verifica permissões para exibir determinada coisa
          */
         $function = new \Twig_SimpleFunction('permission', function ($rule) {
-            return true;//Auth::checkRules($rule);
+            return Auth::checkRules($rule);
         });
 
         $twig->addFunction($function);
@@ -52,6 +59,11 @@ class Retorno{
 
             $view = $controller.'/'.$method.'.html.twig';
         }
+
+        $data = array_merge($data,[
+            "logged"  => $this->app['auth']->isLogged(),
+            "User"    => $this->app['auth']->getUser()
+        ]);
 
         echo $twig->render($view,$data);
         exit();

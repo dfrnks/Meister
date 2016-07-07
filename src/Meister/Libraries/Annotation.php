@@ -12,12 +12,12 @@ use zpt\anno\Annotations;
  * @authenticated    -- acessar estando autenticado
  * @permission       -- [ADM,DEV] -- array com os perfis que pode acessar
  * @post             -- no sei
- * 
+ *
  * Metodos
  * @authenticated
  * @notauthenticated
  * @permission
- * @request          -- POST or [POST,PUT] 
+ * @request          -- POST or [POST,PUT]
  * @notview          -- Não retornar nada, apenas executar
  * @api              -- Retornar um Json
  */
@@ -40,7 +40,7 @@ class Annotation {
      * @throws \Exception
      */
     public function validation($controller,$method,$options) {
-        
+
         $classReflector = new \ReflectionClass($controller);
         $classAnnotations = new Annotations($classReflector);
 
@@ -48,7 +48,7 @@ class Annotation {
         foreach ($classReflector->getMethods() as $methodReflector) {
             $methodAnnotations[$methodReflector->getName()] = new Annotations($methodReflector);
         }
-        
+
         $interfaces = class_implements($controller);
 
         if(isset($interfaces['Meister\Meister\interfaces\MeisterRestInterface'])){
@@ -144,8 +144,10 @@ class Annotation {
         if(array_key_exists('api',$options)){
             $return['api'] = true;
         }
-        
-        return $return;
+
+        foreach ($return as $k => $r){
+            $this->app[$k] = $r;
+        }
 
     }
 
