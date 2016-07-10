@@ -15,15 +15,15 @@ class Auth {
     private $private = "5n)PE`X6@,2=EUZ{b(YF~IqV?w/+Yc btcm{nsvF`xpkf~JsISit]=4?Xl#1oT}F";
 
     private $entity;
-    
+
     private $app;
-    
+
     private $db;
 
     private $config;
-    
+
     private $session;
-    
+
     private $SessionEntity;
 
     public function __construct(Container $app, DatabaseInterface $db, array $config, Session $session){
@@ -32,7 +32,7 @@ class Auth {
         $this->config  = $config;
         $this->session = $session;
         $this->entity  = $this->config['auth']['entity'];
-        
+
         $this->SessionEntity = $this->config['session']['entity'];
     }
 
@@ -170,7 +170,7 @@ class Auth {
             ->setIssuer($_SERVER['REQUEST_SCHEME'].'://'.$_SERVER['HTTP_HOST'])
             ->setIssuedAt(time())
             ->setNotBefore(time() + 1)
-            ->setExpiration(time() + $this->config['session']['time'])
+            ->setExpiration(time() + $this->config['session']['timetoken'])
             ->setId($uid,true)
             ->set('id'  ,$id)
             ->set('sys' ,md5($_SERVER['HTTP_USER_AGENT']))
@@ -235,6 +235,8 @@ class Auth {
 
             throw new \Exception("Credentials incorrect",403);
         }
+
+        $this->session->set('uid',$uid);
 
         return [
             "cod"   => base64_decode(Crypt::mycrypt_decrypt(md5(file_get_contents($fprikey)),$tkon->getClaim('cod'))),

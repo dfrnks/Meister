@@ -72,7 +72,7 @@ class Session {
      * @param $var
      */
     public function remove($var) {
-       $this->cache->remove($this->prefix.$var);
+        $this->cache->remove($this->prefix.$var);
     }
 
     /**
@@ -80,9 +80,9 @@ class Session {
      * @return bool
      */
     public function exist($var) {
-        return $this->cache->exists($var);
+        return $this->cache->exists($this->prefix.$var);
     }
-    
+
     public function destroy() {
         $values = $this->cache->getAll($this->prefix);
         foreach ($values as $val){

@@ -55,6 +55,14 @@ abstract class init implements InitInterface{
         }catch (\Exception $e){
             $retorno = new Retorno($this->app,$this->config);
 
+            $code = $e->getCode();
+
+            http_response_code($code);
+
+            if($this->app['api']){
+                $retorno->jsonRPC($e,$code);
+            }
+
             $retorno->twigException($e);
         }
     }

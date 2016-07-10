@@ -2,3 +2,6 @@ bin
 vendor
 composer.lock
 cache
+.idea/
+app/
+teste

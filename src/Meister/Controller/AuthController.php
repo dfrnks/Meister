@@ -9,12 +9,12 @@ use Meister\Meister\Libraries\Data;
  * @notauthenticated
  * @api
  */
-class authController extends Controller {
-    
+class AuthController extends Controller {
+
     public function loginAction() {
         $_username = $this->app["data"]["_username"];
         $_password = $this->app["data"]["_password"];
-        
+
         $auth = $this->app['auth'];
 
         $s = $auth->login($_username,$_password);
@@ -28,11 +28,9 @@ class authController extends Controller {
 
     public function sessionAction() {
 
-        $auth = $this->app['auth'];
+        $da = $this->app['auth']->checkToken(Data::getHeader('X-Token'));
 
-        $da = $auth->checkToken(Data::getHeader('X-Token'));
-
-        $pessoa = $this->app['db']->db()->getRepository($this->config['auth']['entity'])->findOneBy([
+        $pessoa = $this->db->doc()->getRepository($this->config['auth']['entity'])->findOneBy([
             "id" => $da["id"]
         ]);
 
@@ -40,7 +38,7 @@ class authController extends Controller {
             throw new \Exception("Credentials incorrect",403);
         }
 
-        $auth->setSession($pessoa);
+        $this->app['auth']->setSession($pessoa);
 
         $this->Render([
             true
@@ -48,13 +46,17 @@ class authController extends Controller {
     }
 
     /**
-     * @notview
+     * @api
      */
     public function logoutAction() {
 
         $this->app['auth']->logout();
 
-        header('Location:'.$this->app['WEB_DIR']);
+        $this->Render([
+            true
+        ]);
+
+//        header('Location:'.$this->app['WEB_DIR']);
     }
 
 //    public function forgotAction() {

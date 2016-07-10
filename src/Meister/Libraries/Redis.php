@@ -32,7 +32,7 @@ class Redis implements CacheInterface{
     }
 
     public function get($var = "") {
-        return $this->redis->get($this->getPrefix().$var);
+        return json_decode($this->redis->get($this->getPrefix().$var));
     }
 
     public function getAll($var = "") {
@@ -40,7 +40,7 @@ class Redis implements CacheInterface{
     }
 
     public function set($var,$value, $timeout = 86400) {
-        return $this->redis->setex($this->getPrefix().$var,$timeout,$value);
+        return $this->redis->setex($this->getPrefix().$var,$timeout,json_encode($value));
     }
 
     public function remove($var,$prefix = true) {
