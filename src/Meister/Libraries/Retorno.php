@@ -168,7 +168,7 @@ class Retorno{
 
                     $retorno["error"] = [
                         "code" => -32000,
-                        "message" => "Server error"
+                        "message" => "Server error -> ". $data->getMessage()
                     ];
                     break;
 

@@ -5,6 +5,7 @@ namespace Meister\Meister;
 use Meister\Meister\Interfaces\InitInterface;
 use Meister\Meister\Libraries\Annotation;
 use Meister\Meister\Libraries\Auth;
+use Meister\Meister\Libraries\i18n;
 use Meister\Meister\Libraries\Mongo;
 use Meister\Meister\Libraries\Redis;
 use Meister\Meister\Libraries\Retorno;
@@ -33,12 +34,12 @@ abstract class init implements InitInterface{
     public function __construct($ambiente = null){
         $this->app          = new Container();
         $this->ambiente     = $ambiente;
+
+		$this->start();
     }
 
     public function Run(){
         try{
-
-            $this->loadConfig();
 
             $router = filter_input(INPUT_GET, 'router');
 
@@ -97,8 +98,6 @@ abstract class init implements InitInterface{
         $this->app['options']       = $rota['options'];
 
         $this->app['ModuleDir']     = str_replace('/web/app.php','',$_SERVER['SCRIPT_FILENAME']).'/src/'.$modulo;
-
-        $this->start();
 
         $this->controller = new $c($this->app,$this->config,$this->db,$this->session);
 
@@ -183,12 +182,16 @@ abstract class init implements InitInterface{
     }
 
     public function start(){
-        $this->app['Modules']  = str_replace('/web/app.php','',$_SERVER['SCRIPT_FILENAME']).'/src/';
+		$this->loadConfig();
+
+		$this->app['Modules']  = str_replace('/web/app.php','',$_SERVER['SCRIPT_FILENAME']).'/src/';
         $this->app['BASE_DIR'] = $this->getBaseDir();
         $this->app['WEB_DIR']  = str_replace('app.php','',$_SERVER['SCRIPT_NAME']);
         $this->app['WEB_LINK'] = $this->app['WEB_DIR'];
 
-        $this->app['cache'] = $this->getCache();
+		$this->i18n();
+
+		$this->app['cache'] = $this->getCache();
 
         $this->cache   = $this->Cache();
         $this->db      = $this->newDB();
@@ -216,6 +219,12 @@ abstract class init implements InitInterface{
 
         return $db;
     }
+
+	private function i18n(){
+		$i18n = new i18n($this->app);
+
+		$i18n->init();
+	}
 
     private function Cache(){
         $type = $this->config['cache']['type'];

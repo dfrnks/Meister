@@ -43,7 +43,8 @@ class TesteController extends Controller {
 //
 //        $this->Render(["nome" => $this->data($user)]);
 
-        var_dump($this->app['auth']->login('douglasfrancardoso@gmail.com','asdasd'));
+//        var_dump($this->app['auth']->login('douglasfrancardoso@gmail.com','asdasd'));
+		echo _("string_teste");
 
     }
 }
