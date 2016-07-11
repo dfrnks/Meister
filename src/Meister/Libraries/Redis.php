@@ -59,6 +59,10 @@ class Redis implements CacheInterface{
     }
 
     public function exists($var){
-       return $this->redis->exists($this->getPrefix().$var);
+        if($this->redis->exists($this->getPrefix().$var)){
+            return true;
+        }
+
+        return false;
     }
 }

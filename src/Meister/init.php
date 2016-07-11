@@ -58,8 +58,8 @@ abstract class init implements InitInterface{
             $code = $e->getCode();
 
             http_response_code($code);
-
-            if($this->app['api']){
+            
+            if($this->app->offsetExists('api') && $this->app['api']){
                 $retorno->jsonRPC($e,$code);
             }
 
@@ -92,7 +92,7 @@ abstract class init implements InitInterface{
 
         $this->app['Controller']    = $controller;
         $this->app['Action']        = $action;
-        $this->app['Module']        = 'src\\'.$modulo;
+        $this->app['Module']        = $modulo;
         $this->app['Contr']         = $c;
         $this->app['options']       = $rota['options'];
 

@@ -178,11 +178,11 @@ class Annotation {
     }
 
     private function checkPermission($permission){
-        if(!Auth::isLogged()){
+        if(!$this->app['auth']->isLogged()){
             return true;
         }
 
-        if(!Auth::checkRules($permission)){
+        if(!$this->app['auth']->checkRules($permission)){
             throw new \Exception('forbidden',402);
         }
 
@@ -195,7 +195,7 @@ class Annotation {
      * @throws \Exception
      */
     private function authenticatedValidation($controller = false) {
-        if(Auth::isLogged()){
+        if($this->app['auth']->isLogged()){
             return true;
         }
 

@@ -10,7 +10,7 @@ class Retorno{
     private $app;
 
     private $config;
-    
+
     public function __construct(Container $app,$config){
         $this->app = $app;
         $this->config = $config;
@@ -18,8 +18,7 @@ class Retorno{
 
     public function twig($data){
         $view_dir = [
-            __DIR__.'/../Views',
-            $this->app['ModuleDir'].'/Views'
+            __DIR__.'/../Views'
         ];
 
         $twigConfig = [];
@@ -28,17 +27,17 @@ class Retorno{
             $twigConfig["cache"] = $this->app['cache']['twig'];
         }
 
-        foreach($this->config['modules'] as $app) {
-            $dir = $this->app['Modules'].$app.'/Views';
-            if(file_exists($dir)) {
-                $view_dir[] = $dir;
-            }
-        }
-
         $twigConfig["debug"] = $this->config['twig']['debug'];
 
+        $loader = new \Twig_Loader_Filesystem($view_dir);
+
+        foreach($this->config['modules'] as $app) {
+            $dir = $this->app['Modules'].$app.'/Views';
+            $loader->addPath($dir, $app);
+        }
+
         $twig = new \Twig_Environment(
-            new \Twig_Loader_Filesystem($view_dir),
+            $loader,
             $twigConfig
         );
 
@@ -46,7 +45,7 @@ class Retorno{
          * Verifica permissões para exibir determinada coisa
          */
         $function = new \Twig_SimpleFunction('permission', function ($rule) {
-            return Auth::checkRules($rule);
+            return $this->app['auth']->checkRules($rule);
         });
 
         $twig->addFunction($function);
@@ -57,13 +56,18 @@ class Retorno{
             $controller = str_replace('Controller','',$this->app["Controller"]);
             $method = str_replace('Action','',$this->app["Action"]);
 
-            $view = $controller.'/'.$method.'.html.twig';
+            $view = '@'.$this->app['Module'].'/'.$controller.'/'.$method.'.html.twig';
         }
 
         $data = array_merge($data,[
             "logged"  => $this->app['auth']->isLogged(),
-            "User"    => $this->app['auth']->getUser()
+            "User"    => $this->app['auth']->getUser(),
+            "module"  => $this->app['Module']
         ]);
+
+        foreach ($this->app->keys() as $key){
+            $data[$key] = $this->app[$key];
+        }
 
         echo $twig->render($view,$data);
         exit();
