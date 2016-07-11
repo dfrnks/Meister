@@ -41,6 +41,8 @@ class Retorno{
             $twigConfig
         );
 
+		$twig->addExtension(new \Twig_Extensions_Extension_I18n());
+
         /**
          * Verifica permissões para exibir determinada coisa
          */
