@@ -15,7 +15,9 @@ cache:
   host: 127.0.0.1
 
 session:
-  time: 60
+  time: 3600
+  timetoken: 86400
+  entity: src\teste\Document\Session
 
 auth:
   field: email
@@ -34,10 +36,10 @@ field_user: email
 modules:
  - teste
 #
-# Se for true, por padrão vai verificar se ele está authenticado para poder acessar o controller,
-# e para poder acessar o controller sem autenticação precisa setar o annotation @notauthenticated
+# Se for true, por padrÃ£o vai verificar se ele estÃ¡ authenticado para poder acessar o controller,
+# e para poder acessar o controller sem autenticaÃ§Ã£o precisa setar o annotation @notauthenticated
 #
-# Se for false, por padrão ele vai deixar acessar todos os controllers
-# e so vai verficar se está logado se tiver setado no annotation @authenticated
+# Se for false, por padrÃ£o ele vai deixar acessar todos os controllers
+# e so vai verficar se estÃ¡ logado se tiver setado no annotation @authenticated
 #
-authentication: true
+authentication: false
