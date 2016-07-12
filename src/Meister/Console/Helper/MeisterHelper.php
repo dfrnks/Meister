@@ -1,6 +1,6 @@
 <?php
 
-namespace Meister\Meister\Console;
+namespace Meister\Meister\Console\Helper;
 
 use Meister\Meister\init;
 use Symfony\Component\Console\Helper\Helper;

@@ -1,0 +1,23 @@
+ARQUIVO_TMP="/tmp/arquivos-hmw-$$.txt"
+
+find ./ -type f -name \*.php > $ARQUIVO_TMP
+xgettext -k_e -k__ -k_ngettext:1,2 -L PHP --from-code utf-8 --no-wrap -d hello_multi_world -o hello_multi_world.pot -f $ARQUIVO_TMP
+
+rm -f $ARQUIVO_TMP
+
+msginit -l pt_BR --no-wrap --no-translator -o i18n/pt_BR/LC_MESSAGES/pt_BR.po -i i18n/hello_multi_world.pot
+
+msgfmt -c -o i18n/pt_BR/LC_MESSAGES/pt_BR.mo i18n/pt_BR/LC_MESSAGES/pt_BR.po
+
+
+
+##################################################
+
+ARQUIVO_TMP="/tmp/arquivos-hmw-$$.txt"
+find ./ -type f -name \*.php > $ARQUIVO_TMP
+xgettext -f $ARQUIVO_TMP
+rm -f $ARQUIVO_TMP
+
+
+
+msgfmt messages.po

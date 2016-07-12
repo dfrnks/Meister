@@ -9,7 +9,7 @@ $init->loadConfig()
 
 $helperSet = new \Symfony\Component\Console\Helper\HelperSet(array(
     'dm' => new \Doctrine\ODM\MongoDB\Tools\Console\Helper\DocumentManagerHelper($init->newDB()->doc()),
-    'init' => new \Meister\Meister\Console\MeisterHelper($init)
+    'init' => new \Meister\Meister\Console\Helper\MeisterHelper($init)
 ));
 
 $app = new \Symfony\Component\Console\Application('Console - Meister');
