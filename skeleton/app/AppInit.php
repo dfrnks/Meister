@@ -35,7 +35,6 @@ class AppInit extends init {
                 "rota" => "/",
                 "destino" => "teste::TesteController::indexAction",
                 "options" =>[
-                    "api" => true,
                     "autentication" => true
                 ]
             ]

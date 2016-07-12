@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-07-11 21:56-0300\n"
-"PO-Revision-Date: 2016-07-11 21:56-0300\n"
+"POT-Creation-Date: 2016-07-12 10:21-0300\n"
+"PO-Revision-Date: 2016-07-12 10:25-0300\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
 "Language: pt\n"
@@ -16,11 +16,12 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 1.5.4\n"
 
-#: app/cache/twig/3b/3bc7c59d157875224cf0e9464a7bd490996626d319bb78d8fac39e3625f05842.php:27
+#: app/cache/twig/4d/4de4c721a0d05275e17ac40ffc36cbd4102400998615a7d68fb2daab2fd26e4e.php:27
 msgid "string_teste"
-msgstr "Portuga texto"
+msgstr "Teste de string "
 
-#: app/cache/twig/3b/3bc7c59d157875224cf0e9464a7bd490996626d319bb78d8fac39e3625f05842.php:32
+#: app/cache/twig/4d/4de4c721a0d05275e17ac40ffc36cbd4102400998615a7d68fb2daab2fd26e4e.php:32
 msgid "string_teste_2"
-msgstr "Portuga textos"
+msgstr "Teste da string versão segunda"

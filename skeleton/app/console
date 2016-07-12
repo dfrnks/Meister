@@ -29,7 +29,9 @@ $app->addCommands(array(
 $app->addCommands(array(
     new \Meister\Meister\Console\hello(),
     new \Meister\Meister\Console\privatekey(),
-    new \Meister\Meister\Console\backup()
+    new \Meister\Meister\Console\backup(),
+	new \Meister\Meister\Console\twig_compile(),
+	new \Meister\Meister\Console\translate()
 ));
 
 $app->run();

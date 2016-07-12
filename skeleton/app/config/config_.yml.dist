@@ -34,7 +34,9 @@ mail:
 field_user: email
 
 modules:
- - teste
+ - app
+ - notes
+ - page
 #
 # Se for true, por padrÃ£o vai verificar se ele estÃ¡ authenticado para poder acessar o controller,
 # e para poder acessar o controller sem autenticaÃ§Ã£o precisa setar o annotation @notauthenticated

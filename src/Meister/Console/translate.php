@@ -48,11 +48,12 @@ class translate extends Command
 
 
             # Mapear arquivos PHP
-
+			$output->writeln('<comment>Mapeando arquivos</comment>');
             exec('find ./ -type f -name \*.php > /tmp/list-files-code-translate.txt');
             exec('xgettext --default-domain=messages -p ./i18n --from-code=UTF-8 -L PHP -f /tmp/list-files-code-translate.txt');
             exec('rm -f /tmp/list-files-code-translate.txt');
 
+			$output->writeln('<comment>Gerando arquivos</comment>');
             $m = file_get_contents('i18n/messages.po');
 
             $m = str_replace('"Content-Type: text/plain; charset=CHARSET\n"','"Content-Type: text/plain; charset=UTF-8\n"',$m);
