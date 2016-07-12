@@ -66,7 +66,15 @@ class translate extends Command
                 if($fileInfo->isDir()){
                     $d = $fileInfo->getFilename();
 
-                    exec('msginit -l '. $d .' --no-wrap --no-translator -o i18n/'.$d.'/LC_MESSAGES/messages.po -i i18n/messages.po');
+//                    exec('mv i18n/'.$d.'/LC_MESSAGES/messages.po i18n/'.$d.'/LC_MESSAGES/messages.old.po');
+
+                    exec('msginit -l '. $d .' --no-wrap --no-translator -o i18n/'.$d.'/LC_MESSAGES/messages.new.po -i i18n/messages.po');
+
+//					exec('msgcat --use-first i18n/'.$d.'/LC_MESSAGES/messages.po i18n/'.$d.'/LC_MESSAGES/messages.old.po');
+
+					exec('msgmerge --backup=none -U i18n/'.$d.'/LC_MESSAGES/messages.po i18n/'.$d.'/LC_MESSAGES/messages.new.po');
+
+					exec('rm -f i18n/'.$d.'/LC_MESSAGES/messages.new.po');
                 }
             }
 

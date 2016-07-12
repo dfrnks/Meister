@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-07-12 10:21-0300\n"
+"POT-Creation-Date: 2016-07-12 10:55-0300\n"
 "PO-Revision-Date: 2016-07-12 10:26-0300\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -18,10 +18,15 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Poedit 1.5.4\n"
 
-#: app/cache/twig/4d/4de4c721a0d05275e17ac40ffc36cbd4102400998615a7d68fb2daab2fd26e4e.php:27
+#: app/cache/twig/4d/4de4c721a0d05275e17ac40ffc36cbd4102400998615a7d68fb2daab2fd26e4e.php:33
+#, fuzzy
 msgid "string_teste"
 msgstr "Portugues do Brasil"
 
-#: app/cache/twig/4d/4de4c721a0d05275e17ac40ffc36cbd4102400998615a7d68fb2daab2fd26e4e.php:32
+#: app/cache/twig/4d/4de4c721a0d05275e17ac40ffc36cbd4102400998615a7d68fb2daab2fd26e4e.php:38
 msgid "string_teste_2"
 msgstr "String dos testes"
+
+#: app/cache/twig/4d/4de4c721a0d05275e17ac40ffc36cbd4102400998615a7d68fb2daab2fd26e4e.php:40
+msgid "teste_merge"
+msgstr ""
