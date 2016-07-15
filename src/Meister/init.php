@@ -128,8 +128,16 @@ abstract class init implements InitInterface{
                 ]
             ],
             [
-                "rota" => "/session",
+                "rota" => "/auth/session",
                 "destino" => "Meister::AuthController::sessionAction",
+                "options" =>[
+                    "api" => true,
+                    "request" => ["POST"]
+                ]
+            ],
+            [
+                "rota" => "/auth/register",
+                "destino" => "Meister::AuthController::newUser",
                 "options" =>[
                     "api" => true,
                     "request" => ["POST"]

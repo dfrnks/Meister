@@ -51,4 +51,18 @@ class Controller {
     protected function data($data){
         return Data::serialize($data);
     }
+
+    protected function request($val = null){
+
+        if($val){
+            $data = $this->app['data'];
+            if(array_key_exists($val,$data)){
+                return $data[$val];
+            }
+
+            return null;
+        }
+
+        return $this->app['data'];
+    }
 }

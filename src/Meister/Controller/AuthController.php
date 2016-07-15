@@ -3,6 +3,7 @@
 namespace Meister\Meister\Controller;
 
 use Meister\Meister\Controller;
+use Meister\Meister\Libraries\Crypt;
 use Meister\Meister\Libraries\Data;
 
 /**
@@ -12,8 +13,8 @@ use Meister\Meister\Libraries\Data;
 class AuthController extends Controller {
 
     public function loginAction() {
-        $_username = $this->app["data"]["_username"];
-        $_password = $this->app["data"]["_password"];
+        $_username = $this->request('_username');
+        $_password = $this->request('_password');
 
         $auth = $this->app['auth'];
 
@@ -45,9 +46,6 @@ class AuthController extends Controller {
         ]);
     }
 
-    /**
-     * @api
-     */
     public function logoutAction() {
 
         $this->app['auth']->logout();
@@ -57,6 +55,27 @@ class AuthController extends Controller {
         ]);
 
 //        header('Location:'.$this->app['WEB_DIR']);
+    }
+
+    public function newUser() {
+        $data = $this->request();
+        $config = $this->getConfig('auth');
+
+        if(!array_key_exists($config['field'],$data)){
+            throw new \Exception(sprintf(_("meister_%s_empty"), $config['field']));
+        }
+
+        if(!array_key_exists('password',$data)){
+            throw new \Exception(sprintf(_("meister_%s_empty"), $config['field']));
+        }
+
+        $data['password'] = Crypt::gpass($data['password']);
+
+        $data = $this->data($this->db->insert(new $config['entity'],$data));
+
+        unset($data['password']);
+
+        $this->Render($data);
     }
 
 //    public function forgotAction() {

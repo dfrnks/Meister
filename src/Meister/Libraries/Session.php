@@ -45,7 +45,7 @@ class Session {
      * @return mixed
      */
     public function get($var) {
-        if($this->exist($this->prefix.$var)) {
+        if($this->exist($var)) {
             return $this->cache->get($this->prefix.$var);
         }
 

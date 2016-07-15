@@ -121,6 +121,9 @@ class Auth {
 
         if($this->session->exist('Permission')){
             $rules = $this->session->get('Permission');
+            if(empty($rules)){
+                $rules = [];
+            }
         }
 
         if(array_search("DEV", $rules) === 0 || array_search("DEV", $rules)){
