@@ -187,11 +187,7 @@ abstract class init implements InitInterface{
             ],
             [
                 "rota" => "/auth/recover",
-                "destino" => "Meister::AuthController::recoverPass",
-                "options" =>[
-                    "api" => true,
-                    "request" => ["POST"]
-                ]
+                "destino" => "Meister::AuthController::recoverPass"
             ],
             [
                 "rota" => "/hash/{token}",
