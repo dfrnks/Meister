@@ -58,7 +58,7 @@ class AuthController extends Controller {
     }
 
     public function newUser() {
-        $data = $this->request();
+        $data   = $this->request();
         $config = $this->getConfig('auth');
 
         if(!array_key_exists($config['field'],$data)){
@@ -78,13 +78,29 @@ class AuthController extends Controller {
         $this->Render($data);
     }
 
-//    public function forgotAction() {
-//        $_username = $this->app["data"]["_username"];
-//
-//        $auth = new Auth($this->app);
-//
-//        $s = $auth->forgotPass($_username);
-//
-//        $this->Render([]);
-//    }
+    public function forgotPass() {
+        $_username = $this->request("_username");
+
+        $this->app['auth']->forgotPass($_username);
+
+        $this->Render([true]);
+    }
+
+    public function recover() {
+        $id = $this->request("id");
+
+        #$this->app['auth']->recoverPass($id);
+        # Busca a pessoa e joga na tela
+
+        $this->Render([]);
+    }
+
+    public function recoverPass() {
+        $_username = $this->request('_username');
+        $_password = $this->request('_password');
+
+        $s = $this->app['auth']->recoverPass($_username,$_password);
+
+        $this->Render([$s]);
+    }
 }

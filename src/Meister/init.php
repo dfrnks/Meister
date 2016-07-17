@@ -5,6 +5,7 @@ namespace Meister\Meister;
 use Meister\Meister\Interfaces\InitInterface;
 use Meister\Meister\Libraries\Annotation;
 use Meister\Meister\Libraries\Auth;
+use Meister\Meister\Libraries\Hash;
 use Meister\Meister\Libraries\i18n;
 use Meister\Meister\Libraries\Mongo;
 use Meister\Meister\Libraries\Redis;
@@ -35,7 +36,7 @@ abstract class init implements InitInterface{
         $this->app          = new Container();
         $this->ambiente     = $ambiente;
 
-		$this->start();
+        $this->start();
     }
 
     public function Run(){
@@ -59,7 +60,7 @@ abstract class init implements InitInterface{
             $code = $e->getCode();
 
             http_response_code($code);
-            
+
             if($this->app->offsetExists('api') && $this->app['api']){
                 $retorno->jsonRPC($e,$code);
             }
@@ -73,7 +74,36 @@ abstract class init implements InitInterface{
         $rota = "";
 
         foreach($rotas as $we){
-            if($we['rota'] == "/{$router}"){
+            $r0 = explode('/',$we['rota']);
+            $r1 = explode('/',"/{$router}");
+
+            if(count($r0) != count($r1)){
+                continue;
+            }
+
+            $match = false;
+            foreach ($r1 as $k => $i){
+                if(!array_key_exists($k,$r0) || !preg_match('/{[\w]+}/',$r0[$k],$d) && $r0[$k] != $i){
+                    $match = false;
+                    break;
+                }
+
+                if(preg_match('/{[\w]+}/',$r0[$k],$d)){
+                    $p = preg_replace('/[{}]/','',$r0[$k]);
+
+                    if(array_key_exists('validate',$we['options']) && array_key_exists($p,$we['options']['validate'])){
+                        if(!preg_match("/{$we['options']['validate'][$p]}$/",$i)){
+                            throw new \Exception(sprintf(_('meister_router_%s_not_match_%s'),$p,$we['options']['validate'][$p]));
+                        }
+                    }
+
+                    $we['params'][$p] = $i;
+                }
+
+                $match = true;
+            }
+
+            if($match){
                 $rota = $we;
                 break;
             }
@@ -82,6 +112,8 @@ abstract class init implements InitInterface{
         if(!$rota){
             throw new \Exception('Router not found',420404);
         }
+
+        unset($rota['options']['validate']);
 
 //        if($rota['options'] && array_key_exists('api',$rota['options'])){
 //            $this->app['api'] = true;
@@ -96,6 +128,7 @@ abstract class init implements InitInterface{
         $this->app['Module']        = $modulo;
         $this->app['Contr']         = $c;
         $this->app['options']       = $rota['options'];
+        $this->app['params']        = $rota['params'];
 
         $this->app['ModuleDir']     = str_replace('/web/app.php','',$_SERVER['SCRIPT_FILENAME']).'/src/'.$modulo;
 
@@ -141,6 +174,29 @@ abstract class init implements InitInterface{
                 "options" =>[
                     "api" => true,
                     "request" => ["POST"]
+                ]
+            ],
+            [
+                "rota" => "/auth/forgot",
+                "destino" => "Meister::AuthController::forgotPass",
+                "options" =>[
+                    "api" => true,
+                    "request" => ["POST"]
+                ]
+            ],
+            [
+                "rota" => "/auth/recover",
+                "destino" => "Meister::AuthController::recoverPass",
+                "options" =>[
+                    "api" => true,
+                    "request" => ["POST"]
+                ]
+            ],
+            [
+                "rota" => "/hash/{token}",
+                "destino" => "Meister::HashController::check",
+                "options" =>[
+                    "request" => ["GET"]
                 ]
             ]
         ];
@@ -190,21 +246,22 @@ abstract class init implements InitInterface{
     }
 
     public function start(){
-		$this->loadConfig();
+        $this->loadConfig();
 
-		$this->app['Modules']  = str_replace('/web/app.php','',$_SERVER['SCRIPT_FILENAME']).'/src/';
+        $this->app['Modules']  = str_replace('/web/app.php','',$_SERVER['SCRIPT_FILENAME']).'/src/';
         $this->app['BASE_DIR'] = $this->getBaseDir();
         $this->app['WEB_DIR']  = str_replace('app.php','',$_SERVER['SCRIPT_NAME']);
         $this->app['WEB_LINK'] = $this->app['WEB_DIR'];
 
-		$this->i18n();
+        $this->i18n();
 
-		$this->app['cache'] = $this->getCache();
+        $this->app['cache'] = $this->getCache();
 
         $this->cache   = $this->Cache();
         $this->db      = $this->newDB();
         $this->session = $this->Session();
 
+        $this->app['hash'] = $this->Hash();
         $this->app['auth'] = $this->Auth();
 
         $this->app['data'] = (array) json_decode(file_get_contents('php://input'));
@@ -228,11 +285,11 @@ abstract class init implements InitInterface{
         return $db;
     }
 
-	private function i18n(){
-		$i18n = new i18n($this->app);
+    private function i18n(){
+        $i18n = new i18n($this->app);
 
-		$i18n->init();
-	}
+        $i18n->init();
+    }
 
     private function Cache(){
         $type = $this->config['cache']['type'];
@@ -253,14 +310,14 @@ abstract class init implements InitInterface{
     }
 
     private function Session(){
-        $session = new Session($this->cache,$this->config["session"]["time"]);
-
-        return $session;
+        return new Session($this->cache,$this->config["session"]["time"]);
     }
 
     private function Auth(){
-        $auth = new Auth($this->app, $this->db, $this->config, $this->session);
+        return new Auth($this->app, $this->db, $this->config, $this->session);
+    }
 
-        return $auth;
+    private function Hash(){
+        return new Hash($this->app, $this->db);
     }
 }

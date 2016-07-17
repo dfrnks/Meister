@@ -7,14 +7,13 @@ use Lcobucci\JWT\Parser;
 use Lcobucci\JWT\Signer\Key;
 use Lcobucci\JWT\Signer\Rsa\Sha512;
 use Lcobucci\JWT\ValidationData;
+use Meister\Meister\Document\Sessoes;
 use Meister\Meister\Interfaces\DatabaseInterface;
 use Pimple\Container;
 
 class Auth {
 
     private $private = "5n)PE`X6@,2=EUZ{b(YF~IqV?w/+Yc btcm{nsvF`xpkf~JsISit]=4?Xl#1oT}F";
-
-    private $entity;
 
     private $app;
 
@@ -23,6 +22,8 @@ class Auth {
     private $config;
 
     private $session;
+
+    private $entity;
 
     private $SessionEntity;
 
@@ -33,7 +34,7 @@ class Auth {
         $this->session = $session;
         $this->entity  = $this->config['auth']['entity'];
 
-        $this->SessionEntity = $this->config['session']['entity'];
+        $this->SessionEntity = new Sessoes();
     }
 
     /**
@@ -252,32 +253,41 @@ class Auth {
 
         // Envia email com alguma coisa para ele.
 
-        $fiedlUser = $this->config["auth"]["field"];
-
-        if(empty($fiedlUser)){
-            $fiedlUser = "username";
-        }
-
         $pessoa = $this->db->doc()->getRepository($this->entity)->findOneBy([
-            $fiedlUser => $_username
+            $this->entity => $_username
         ]);
 
         $pessoa = Data::serialize($pessoa);
 
         $validade = (new \DateTime())->add(new \DateInterval('PT24H'));
 
-        $token = hashController::getSToken([
+        $token = $this->app['hash']->getToken([
             "id" => $pessoa['id']
-        ],$this->app['WEB_LINK'].'api/auth/recover',$validade,true,$pessoa);
+        ],$this->app['WEB_LINK'].'auth/recover', $validade, true, $pessoa);
 
         $e = new Email();
 
-        $e->sendMail($pessoa['email'],'Token',$this->app['WEB_LINK'].'api/hash/check/token/'.$token,true);
+        $e->sendMail($pessoa['email'],'Token',$this->app['WEB_LINK'].'hash/'.$token,true);
 
         return true;
     }
 
     public function recoverPass($_username,$_password){
+        // Versão dois
         // pegas a senha nova e envia um email com um codigo de segurança para validar.
+
+        $pessoa = $this->db->doc()->getRepository($this->entity)->findOneBy([
+            $this->entity => $_username
+        ]);
+
+        if(!$pessoa){
+            throw new \Exception(_('meister_auth_pessoa_nao_encontrada'));
+        }
+
+        $this->db->update($pessoa,[
+            "password" => Crypt::gpass($_password)
+        ]);
+
+        return true;
     }
 }

@@ -17,7 +17,6 @@ cache:
 session:
   time: 3600
   timetoken: 86400
-  entity: src\teste\Document\Session
 
 auth:
   field: email

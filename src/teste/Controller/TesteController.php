@@ -17,6 +17,8 @@ class TesteController extends Controller {
      */
     public function indexAction() {
 
+        var_dump($this->app['params']);
+
 //        $this->session->set('teste',time());
 //        $this->session->set('teste1',time());
 //        $this->session->set('teste2',time());
