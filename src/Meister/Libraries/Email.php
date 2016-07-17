@@ -2,10 +2,19 @@
 
 namespace Meister\Meister\Libraries;
 
-use app\Kernel;
-use Main\app\Document\Emails;
+use Meister\Meister\Interfaces\DatabaseInterface;
+use Pimple\Container;
 
-class Email extends Kernel{
+class Email{
+
+    private $db;
+
+    private $app;
+
+    public function __construct(Container $app, DatabaseInterface $db){
+        $this->app = $app;
+        $this->db  = $db;
+    }
 
     public function sendMail($to, $subject, $message, $now = false, $from = null){
         
@@ -25,7 +34,9 @@ class Email extends Kernel{
             $mail["dataenvio"] = new \DateTime();
         }
 
-        $this->db()->insert(new Emails(),$mail);
+        $this->db->insert(new \Meister\Meister\Document\Emails(),$mail);
+
+        return true;
 
     }
 
@@ -38,7 +49,7 @@ class Email extends Kernel{
         }
 
         if(!$conf['smtp']){
-
+            return true;
         }else {
             $transport = \Swift_SmtpTransport::newInstance($conf['smtp'], $conf['port'])
                 ->setUsername($conf['user'])

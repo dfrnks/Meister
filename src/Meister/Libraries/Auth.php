@@ -253,9 +253,19 @@ class Auth {
 
         // Envia email com alguma coisa para ele.
 
+        $fiedlUser = $this->config["auth"]["field"];
+
+        if(empty($fiedlUser)){
+            $fiedlUser = "username";
+        }
+
         $pessoa = $this->db->doc()->getRepository($this->entity)->findOneBy([
-            $this->entity => $_username
+            $fiedlUser => $_username
         ]);
+
+        if(!$pessoa){
+            throw new \Exception(_('meister_auth_pessoa_nao_encontrada'));
+        }
 
         $pessoa = Data::serialize($pessoa);
 
@@ -265,19 +275,22 @@ class Auth {
             "id" => $pessoa['id']
         ],$this->app['WEB_LINK'].'auth/recover', $validade, true, $pessoa);
 
-        $e = new Email();
+        return $this->app['mail']->sendMail($pessoa['email'],'Token',$this->app['WEB_LINK'].'hash/'.$token,true);
 
-        $e->sendMail($pessoa['email'],'Token',$this->app['WEB_LINK'].'hash/'.$token,true);
-
-        return true;
     }
 
     public function recoverPass($_username,$_password){
         // Versão dois
         // pegas a senha nova e envia um email com um codigo de segurança para validar.
 
+        $fiedlUser = $this->config["auth"]["field"];
+
+        if(empty($fiedlUser)){
+            $fiedlUser = "username";
+        }
+
         $pessoa = $this->db->doc()->getRepository($this->entity)->findOneBy([
-            $this->entity => $_username
+            $fiedlUser => $_username
         ]);
 
         if(!$pessoa){

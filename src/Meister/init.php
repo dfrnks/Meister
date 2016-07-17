@@ -5,6 +5,7 @@ namespace Meister\Meister;
 use Meister\Meister\Interfaces\InitInterface;
 use Meister\Meister\Libraries\Annotation;
 use Meister\Meister\Libraries\Auth;
+use Meister\Meister\Libraries\Email;
 use Meister\Meister\Libraries\Hash;
 use Meister\Meister\Libraries\i18n;
 use Meister\Meister\Libraries\Mongo;
@@ -127,8 +128,8 @@ abstract class init implements InitInterface{
         $this->app['Action']        = $action;
         $this->app['Module']        = $modulo;
         $this->app['Contr']         = $c;
-        $this->app['options']       = $rota['options'];
-        $this->app['params']        = $rota['params'];
+        $this->app['options']       = (isset($rota['options']) ? $rota['options'] : []);
+        $this->app['params']        = (isset($rota['params']) ? $rota['params'] : []);
 
         $this->app['ModuleDir']     = str_replace('/web/app.php','',$_SERVER['SCRIPT_FILENAME']).'/src/'.$modulo;
 
@@ -239,6 +240,7 @@ abstract class init implements InitInterface{
 
         if(file_exists($file)){
             $this->config = Yaml::parse(file_get_contents($file));
+            $this->app['config'] = $this->config;
             return $this;
         }
 
@@ -263,6 +265,7 @@ abstract class init implements InitInterface{
 
         $this->app['hash'] = $this->Hash();
         $this->app['auth'] = $this->Auth();
+        $this->app['mail'] = $this->Mail();
 
         $this->app['data'] = (array) json_decode(file_get_contents('php://input'));
     }
@@ -319,5 +322,9 @@ abstract class init implements InitInterface{
 
     private function Hash(){
         return new Hash($this->app, $this->db);
+    }
+
+    private function Mail(){
+        return new Email($this->app, $this->db);
     }
 }

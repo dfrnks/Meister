@@ -16,7 +16,7 @@ class Mongo implements DatabaseInterface{
     
     private $db;
 
-    public function __construct(array $config,Container $app) {
+    public function __construct(array $config, Container $app) {
         $this->config = $config;
         $this->app = $app;
         
