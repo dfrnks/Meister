@@ -24,6 +24,14 @@ class Email{
             $enviado = $this->send($to, $subject, $message, $from);
         }
 
+        if(!$from){
+            $conf = $this->app['config']['mail'];
+
+            if(!$from){
+                $from = $conf['from'];
+            }
+        }
+
         $mail["to"]         = $to;
         $mail["from"]       = $from;
         $mail["subject"]    = $subject;
@@ -51,7 +59,7 @@ class Email{
         if(!$conf['smtp']){
             return true;
         }else {
-            $transport = \Swift_SmtpTransport::newInstance($conf['smtp'], $conf['port'])
+            $transport = \Swift_SmtpTransport::newInstance($conf['host'], $conf['port'])
                 ->setUsername($conf['user'])
                 ->setPassword($conf['pass']);
 

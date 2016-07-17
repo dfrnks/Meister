@@ -4,6 +4,7 @@ namespace Meister\Meister\Controller;
 
 use Meister\Meister\Controller;
 use Meister\Meister\Libraries\Crypt;
+use Meister\Meister\Libraries\Curl;
 use Meister\Meister\Libraries\Data;
 
 /**
@@ -87,7 +88,9 @@ class AuthController extends Controller {
     }
 
     public function recover() {
-        $id = $this->request("id");
+        $data = (new Curl())->getRedirect();
+
+        var_dump($data);
 
         #$this->app['auth']->recoverPass($id);
         # Busca a pessoa e joga na tela

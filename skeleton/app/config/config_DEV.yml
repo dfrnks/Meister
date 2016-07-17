@@ -23,7 +23,7 @@ auth:
   entity: src\teste\Document\Users
 
 mail:
-  stmp: true
+  smtp: true
   host:
   port:
   user:

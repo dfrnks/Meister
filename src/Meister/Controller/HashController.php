@@ -27,8 +27,6 @@ class HashController extends Controller {
             throw new \Exception(_('meister_hash_token_invalido'));
         }
 
-        (new Curl())->post($rota,$token->getJson(),[
-            "CURLOPT_FOLLOWLOCATION" => true
-        ]);
+        (new Curl())->redirect($rota,$token->getJson());
     }
 }

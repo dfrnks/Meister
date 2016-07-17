@@ -24,4 +24,25 @@ class Curl{
         
         return json_decode($server_output);
     }
+
+    public function redirect($URL, $data){
+
+        $uid = Data::uid();
+
+        $cdata = Crypt::open_encrypt($data);
+
+        setcookie($uid,$cdata);
+
+        header('Location: '. $URL . "?noid=" . $uid);
+    }
+
+    public function getRedirect(){
+
+        $uid = $_REQUEST['noid'];
+
+        $cdata = $_COOKIE[$uid];
+        unset($_COOKIE[$uid]);
+
+        return Crypt::decryptOpenssl($cdata);
+    }
 }
