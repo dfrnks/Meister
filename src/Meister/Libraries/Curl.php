@@ -40,6 +40,8 @@ class Curl{
 
         $cdata = $session->get($app['params']['uid']);
 
+        $session->remove($app['params']['uid']);
+
         return Crypt::decryptOpenssl($cdata);
     }
 }

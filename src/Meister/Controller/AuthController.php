@@ -86,24 +86,4 @@ class AuthController extends Controller {
 
         $this->Render([true]);
     }
-
-    public function recover() {
-        $data = (new Curl())->getRedirect($this->app,$this->session);
-
-        var_dump($data);
-
-        #$this->app['auth']->recoverPass($id);
-        # Busca a pessoa e joga na tela
-
-        $this->Render([]);
-    }
-
-    public function recoverPass() {
-        $_username = $this->request('_username');
-        $_password = $this->request('_password');
-
-        $s = $this->app['auth']->recoverPass($_username,$_password);
-
-        $this->Render([$s]);
-    }
 }
