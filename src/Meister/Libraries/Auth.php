@@ -275,7 +275,11 @@ class Auth {
             "id" => $pessoa['id']
         ],$this->app['WEB_LINK'].$this->config['auth']['rotarecover'], $validade, true, $pessoa);
 
-        return $this->app['mail']->sendMail($pessoa['email'],'Token',$_SERVER['HTTP_HOST'].$this->app['WEB_LINK'].'hash/'.$token,true);
+        $data = [
+            "url_retorno" => $_SERVER['HTTP_HOST'].$this->app['WEB_LINK'].'hash/'.$token
+        ];
+
+        return $this->app['mail']->sendMail($pessoa['email'],'Token',$this->app['twig']->render('{module}/Emails/recoverPass.html.twig',$data),true);
 
     }
 

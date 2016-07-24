@@ -17,40 +17,6 @@ class Retorno{
     }
 
     public function twig($data){
-        $view_dir = [
-            __DIR__.'/../Views'
-        ];
-
-        $twigConfig = [];
-
-        if($this->config['twig']['cache']){
-            $twigConfig["cache"] = $this->app['cache']['twig'];
-        }
-
-        $twigConfig["debug"] = $this->config['twig']['debug'];
-
-        $loader = new \Twig_Loader_Filesystem($view_dir);
-
-        foreach($this->config['modules'] as $app) {
-            $dir = $this->app['Modules'].$app.'/Views';
-            $loader->addPath($dir, $app);
-        }
-
-        $twig = new \Twig_Environment(
-            $loader,
-            $twigConfig
-        );
-
-        $twig->addExtension(new \Twig_Extensions_Extension_I18n());
-
-        /**
-         * Verifica permissões para exibir determinada coisa
-         */
-        $function = new \Twig_SimpleFunction('permission', function ($rule) {
-            return $this->app['auth']->checkRules($rule);
-        });
-
-        $twig->addFunction($function);
 
         if(array_key_exists('template', $data) && !empty($data['template'])){
             $view = $data['template'];
@@ -61,17 +27,7 @@ class Retorno{
             $view = '@'.$this->app['Module'].'/'.$controller.'/'.$method.'.html.twig';
         }
 
-        $data = array_merge($data,[
-            "logged"  => $this->app['auth']->isLogged(),
-            "User"    => $this->app['auth']->getUser(),
-            "module"  => $this->app['Module']
-        ]);
-
-        foreach ($this->app->keys() as $key){
-            $data[$key] = $this->app[$key];
-        }
-
-        echo $twig->render($view,$data);
+        echo $this->app['twig']->render($view,$data);
         exit();
     }
 

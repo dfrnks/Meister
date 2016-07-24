@@ -12,6 +12,7 @@ use Meister\Meister\Libraries\Mongo;
 use Meister\Meister\Libraries\Redis;
 use Meister\Meister\Libraries\Retorno;
 use Meister\Meister\Libraries\Session;
+use Meister\Meister\Libraries\Twig;
 use Pimple\Container;
 use Symfony\Component\Yaml\Yaml;
 
@@ -262,6 +263,7 @@ abstract class init implements InitInterface{
         $this->app['hash'] = $this->Hash();
         $this->app['auth'] = $this->Auth();
         $this->app['mail'] = $this->Mail();
+        $this->app['twig'] = $this->Twig();
 
         $this->app['data'] = (array) json_decode(file_get_contents('php://input'));
     }
@@ -322,5 +324,9 @@ abstract class init implements InitInterface{
 
     private function Mail(){
         return new Email($this->app, $this->db);
+    }
+
+    private function Twig(){
+        return new Twig($this->app, $this->config);
     }
 }
