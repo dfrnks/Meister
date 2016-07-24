@@ -21,27 +21,24 @@ class Curl{
         $server_output = curl_exec($ch);
 
         curl_close($ch);
-        
+
         return json_decode($server_output);
     }
 
-    public function redirect($URL, $data){
+    public function redirect($URL, $data, Session $session){
 
         $uid = Data::uid();
 
         $cdata = Crypt::open_encrypt($data);
 
-        setcookie($uid,$cdata);
+        $session->set($uid,$cdata);
 
-        header('Location: '. $URL . "?noid=" . $uid);
+        header('Location: '. $URL . "/" . $uid);
     }
 
-    public function getRedirect(){
+    public function getRedirect($app,Session $session){
 
-        $uid = $_REQUEST['noid'];
-
-        $cdata = $_COOKIE[$uid];
-        unset($_COOKIE[$uid]);
+        $cdata = $session->get($app['params']['uid']);
 
         return Crypt::decryptOpenssl($cdata);
     }

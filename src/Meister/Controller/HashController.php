@@ -27,6 +27,6 @@ class HashController extends Controller {
             throw new \Exception(_('meister_hash_token_invalido'));
         }
 
-        (new Curl())->redirect($rota,$token->getJson());
+        (new Curl())->redirect($rota,$token->getJson(),$this->session);
     }
 }

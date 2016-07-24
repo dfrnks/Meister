@@ -21,6 +21,7 @@ session:
 auth:
   field: email
   entity: src\teste\Document\Users
+  rotarecover: /auth/recover
 
 mail:
   smtp: true

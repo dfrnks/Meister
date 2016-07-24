@@ -92,7 +92,7 @@ abstract class init implements InitInterface{
                 if(preg_match('/{[\w]+}/',$r0[$k],$d)){
                     $p = preg_replace('/[{}]/','',$r0[$k]);
 
-                    if(array_key_exists('validate',$we['options']) && array_key_exists($p,$we['options']['validate'])){
+                    if(array_key_exists('options',$we) && array_key_exists('validate',$we['options']) && array_key_exists($p,$we['options']['validate'])){
                         if(!preg_match("/{$we['options']['validate'][$p]}$/",$i)){
                             throw new \Exception(sprintf(_('meister_router_%s_not_match_%s'),$p,$we['options']['validate'][$p]));
                         }
@@ -186,8 +186,8 @@ abstract class init implements InitInterface{
                 ]
             ],
             [
-                "rota" => "/auth/recover",
-                "destino" => "Meister::AuthController::recoverPass"
+                "rota" => "/auth/recover/{uid}",
+                "destino" => "Meister::AuthController::recover"
             ],
             [
                 "rota" => "/hash/{token}",

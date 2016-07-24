@@ -88,7 +88,7 @@ class AuthController extends Controller {
     }
 
     public function recover() {
-        $data = (new Curl())->getRedirect();
+        $data = (new Curl())->getRedirect($this->app,$this->session);
 
         var_dump($data);
 
