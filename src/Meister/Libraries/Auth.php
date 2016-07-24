@@ -273,7 +273,7 @@ class Auth {
 
         $token = $this->app['hash']->getToken([
             "id" => $pessoa['id']
-        ],$this->app['WEB_LINK'].$this->config['auth']['timetoken'], $validade, true, $pessoa);
+        ],$this->app['WEB_LINK'].$this->config['auth']['rotarecover'], $validade, true, $pessoa);
 
         return $this->app['mail']->sendMail($pessoa['email'],'Token',$_SERVER['HTTP_HOST'].$this->app['WEB_LINK'].'hash/'.$token,true);
 
