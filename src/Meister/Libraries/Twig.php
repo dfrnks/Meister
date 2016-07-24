@@ -24,7 +24,8 @@ class Twig{
 
     public function init(){
         $view_dir = [
-            __DIR__.'/../Views'
+            __DIR__.'/../Views',
+            __DIR__.'/../Templates',
         ];
 
         $twigConfig = [];
@@ -37,9 +38,16 @@ class Twig{
 
         $loader = new \Twig_Loader_Filesystem($view_dir);
 
+        foreach($view_dir as $d) {
+            $loader->addPath($d, 'Meister');
+        }
+
         foreach($this->config['modules'] as $app) {
-            $loader->addPath($this->app['Modules'].$app.'/Views', $app);
-            $loader->addPath($this->app['Modules'].$app.'/Templates', $app);
+            if(file_exists($this->app['Modules'].$app.'/Views'))
+                $loader->addPath($this->app['Modules'].$app.'/Views', $app);
+
+            if(file_exists($this->app['Modules'].$app.'/Templates'))
+                $loader->addPath($this->app['Modules'].$app.'/Templates', $app);
         }
 
         $this->twig = new \Twig_Environment(
@@ -64,7 +72,7 @@ class Twig{
         $view = str_replace('{module}',$this->app['Module'],$v);
 
         if(!$this->twig->resolveTemplate($view)){
-            $view = str_replace('{module}','Meister',$v);
+            $view = str_replace('@{module}/','',$v);
         }
 
         $data = array_merge($data,[

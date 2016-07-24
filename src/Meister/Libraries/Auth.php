@@ -279,7 +279,7 @@ class Auth {
             "url_retorno" => $_SERVER['HTTP_HOST'].$this->app['WEB_LINK'].'hash/'.$token
         ];
 
-        return $this->app['mail']->sendMail($pessoa['email'],'Token',$this->app['twig']->render('{module}/Emails/recoverPass.html.twig',$data),true);
+        return $this->app['mail']->sendMail($pessoa['email'],'Token',$this->app['twig']->render('@{module}/Emails/recoverPass.html.twig',$data),true);
 
     }
 
