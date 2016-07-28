@@ -151,10 +151,11 @@ class Auth {
         $user = $this->session->get('User');
 
         if($fild){
+            $user = (array) $user;
             return array_key_exists($fild, $user) ? $user[$fild] : null;
         }
 
-        return $user;
+        return (array)$user;
     }
 
     public function getToken($id,$pass) {
