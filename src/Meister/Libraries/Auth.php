@@ -188,7 +188,7 @@ class Auth {
         $tkn = ob_get_contents();
         ob_end_clean();
 
-        $this->db->insert(new $this->SessionEntity(),[
+        $this->db->insert($this->SessionEntity,[
             "user"      => $id,
             "uid"       => $uid,
             "browser"   => $_SERVER['HTTP_USER_AGENT']
@@ -229,7 +229,7 @@ class Auth {
             throw new \Exception("Credentials incorrect",403);
         }
 
-        $sessao = $this->db->doc()->getRepository($this->SessionEntity)->findOneBy(['uid' => $uid]);
+        $sessao = $this->db->doc()->getRepository(get_class($this->SessionEntity))->findOneBy(['uid' => $uid]);
 
         if(empty($sessao)){
             throw new \Exception("Session not found",403);
