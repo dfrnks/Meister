@@ -25,7 +25,7 @@ class Controller {
         $this->config  = $config;
     }
 
-    protected function Render($data){
+    protected function Render($data = []){
 
         $retorno = new Retorno($this->app,$this->config);
 
