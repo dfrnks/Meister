@@ -110,7 +110,7 @@ class Auth {
     }
 
     public function isLogged() {
-        if($this->session->exist('uid')) {
+        if($this->session->exist('idusuario')) {
             return true;
         }
 

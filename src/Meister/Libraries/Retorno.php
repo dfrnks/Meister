@@ -84,9 +84,13 @@ class Retorno{
 
                 case 404:
 
+                    $message = "Method not found";
+                    if($data->getMessage()){
+                        $message = $data->getMessage();
+                    }
                     $retorno["error"] = [
                         "code" => -32601,
-                        "message" => "Method not found"
+                        "message" => $message
                     ];
                     break;
 

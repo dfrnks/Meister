@@ -33,6 +33,11 @@ class Controller {
             $retorno->jsonRPC($data);
         }
 
+        $options = $this->app['options'];
+        if(array_key_exists('notview',$options) && $options['notview']){
+            exit();
+        }
+
         $retorno->twig($data);
     }
 
