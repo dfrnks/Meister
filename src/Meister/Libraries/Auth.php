@@ -274,7 +274,7 @@ class Auth {
 
         $token = $this->app['hash']->getToken([
             "id" => $pessoa['id']
-        ],$_SERVER['HTTP_HOST'].$this->app['WEB_LINK'].$this->config['auth']['rotarecover'], $validade, true, $pessoa);
+        ],"http://".$_SERVER['HTTP_HOST'].$this->app['WEB_LINK'].$this->config['auth']['rotarecover'], $validade, true, $pessoa);
 
         $data = [
             "url_retorno" => $_SERVER['HTTP_HOST'].$this->app['WEB_LINK'].'hash/'.$token
