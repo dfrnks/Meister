@@ -28,7 +28,10 @@ class twig_compile extends Command
 
         $output->writeln('<comment>Iniciando busca de templates</comment>');
 
-        $app = new \app\AppInit('DEV');
+        /**
+         * @var $app \app\AppInit
+         */
+        $app = $this->getHelper('init')->getInit();
 
         $cache = $app->getCache();
 
@@ -40,6 +43,17 @@ class twig_compile extends Command
             'cache' => $cache['twig'],
             'auto_reload' => true
         ));
+
+        $config = $app->config();
+        $container = $app->container();
+
+        foreach($config['modules'] as $ap) {
+            if(file_exists($container['Modules'].$ap.'/Views'))
+                $loader->addPath($container['Modules'].$ap.'/Views', $ap);
+
+            if(file_exists($container['Modules'].$ap.'/Templates'))
+                $loader->addPath($container['Modules'].$ap.'/Templates', $ap);
+        }
 
         $twig->addExtension(new \Twig_Extensions_Extension_I18n());
 

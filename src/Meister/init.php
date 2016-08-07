@@ -268,6 +268,14 @@ abstract class init implements InitInterface{
         $this->app['data'] = (array) json_decode(file_get_contents('php://input'));
     }
 
+    public function config(){
+        return $this->config;
+    }
+
+    public function container(){
+        return $this->app;
+    }
+
     public function newDB(){
         $type = $this->config['database']['type'];
 
