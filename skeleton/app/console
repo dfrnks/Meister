@@ -4,8 +4,9 @@
 require_once __DIR__.'/bootstrap.php';
 
 $init = new \app\AppInit();
-$init->loadConfig()
-     ->start();
+$init->start();
+
+var_dump($init->newDB()->doc());
 
 $helperSet = new \Symfony\Component\Console\Helper\HelperSet(array(
     'dm' => new \Doctrine\ODM\MongoDB\Tools\Console\Helper\DocumentManagerHelper($init->newDB()->doc()),

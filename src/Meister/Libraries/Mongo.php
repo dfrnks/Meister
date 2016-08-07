@@ -36,7 +36,7 @@ class Mongo implements DatabaseInterface{
 
         $anno = [];
         foreach($this->config['modules'] as $app) {
-            $dir = $this->app['Modules'].$app.'/Document';
+            $dir = $this->app['BASE_DIR'].$this->app['Modules'].$app.'/Document';
             if(file_exists($dir)) {
                 $anno[] = $dir;
             }

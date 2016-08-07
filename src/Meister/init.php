@@ -247,7 +247,7 @@ abstract class init implements InitInterface{
     public function start(){
         $this->loadConfig();
 
-        $this->app['Modules']  = str_replace('/web/app.php','',$_SERVER['SCRIPT_FILENAME']).'/src/';
+        $this->app['Modules']  = (str_replace('/web/app.php','',$_SERVER['SCRIPT_FILENAME']) == 'app/console' ? '' : str_replace('/web/app.php','',$_SERVER['SCRIPT_FILENAME'])).'/src/';
         $this->app['BASE_DIR'] = $this->getBaseDir();
         $this->app['WEB_DIR']  = str_replace('app.php','',$_SERVER['SCRIPT_NAME']);
         $this->app['WEB_LINK'] = $this->app['WEB_DIR'];
