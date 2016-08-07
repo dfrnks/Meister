@@ -59,7 +59,7 @@ class twig_compile extends Command
 
         $d = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($src), \RecursiveIteratorIterator::LEAVES_ONLY);
 
-        $Regex2    = new \RegexIterator($d,'/\.html.twig$/i');
+        $Regex2 = new \RegexIterator($d,'/\.html.twig$/i');
 
         foreach($Regex2 as $file){
             if ($file->isFile()) {

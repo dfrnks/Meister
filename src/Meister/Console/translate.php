@@ -14,7 +14,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class translate extends Command
 {
-    
+
     protected function configure()
     {
         $this
@@ -101,7 +101,7 @@ class translate extends Command
                     $d = $fileInfo->getFilename();
 
                     // msgfmt messages.po
-                    exec('msgfmt i18n/'.$d.'/LC_MESSAGES/messages.po -o i18n/'.$d.'/LC_MESSAGES/messages.mo');
+                    exec('msgfmt '.$container['BASE_DIR'].'/i18n/'.$d.'/LC_MESSAGES/messages.po -o '.$container['BASE_DIR'].'/i18n/'.$d.'/LC_MESSAGES/messages.mo');
                 }
             }
 
