@@ -37,7 +37,7 @@ class AuthController extends Controller {
         ]);
 
         if(empty($pessoa)){
-            throw new \Exception("Credentials incorrect",403);
+            throw new \Exception(_("Credentials incorrect"),403);
         }
 
         $this->app['auth']->setSession($pessoa);

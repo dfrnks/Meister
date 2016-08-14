@@ -217,28 +217,24 @@ class Auth {
 
         if(!$tkon->validate($data)){
             $this->logout();
-            throw new \Exception("Credentials incorrect",403);
+            throw new \Exception(_("Credentials incorrect"),403);
         }
 
         $sign = new Sha512();
         $publicKey = new Key("file://".$fpubkey);
 
         if(!$tkon->verify($sign, $publicKey)){
-            sleep(5);
-
-            throw new \Exception("Credentials incorrect",403);
+            throw new \Exception(_("Credentials incorrect"),403);
         }
 
         $sessao = $this->db->doc()->getRepository(get_class($this->SessionEntity))->findOneBy(['uid' => $uid]);
 
         if(empty($sessao)){
-            throw new \Exception("Session not found",403);
+            throw new \Exception(_("Session not found"),403);
         }
 
         if($tkon->getClaim('sys') != md5($sessao->getBrowser())){
-            sleep(5);
-
-            throw new \Exception("Credentials incorrect",403);
+            throw new \Exception(_("Credentials incorrect"),403);
         }
 
         $this->session->set('uid',$uid);
