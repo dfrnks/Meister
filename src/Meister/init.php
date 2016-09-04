@@ -151,7 +151,7 @@ abstract class init implements InitInterface{
                 "destino" => "Meister::AuthController::loginAction",
                 "options" =>[
                     "api" => true,
-                    "request" => ["POST"]
+                    "request" => ["POST","OPTIONS"]
                 ]
             ],
             [
