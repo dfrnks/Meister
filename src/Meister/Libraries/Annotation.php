@@ -160,6 +160,10 @@ class Annotation {
 
         $method = $_SERVER['REQUEST_METHOD'];
 
+        if($method == "OPTIONS"){
+            exit();
+        }
+
         $mallow = $request;
 
         if(is_array($request)) {
